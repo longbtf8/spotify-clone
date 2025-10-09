@@ -164,7 +164,18 @@ document.addEventListener("DOMContentLoaded", function () {
           authButtons.classList.add("show");
         }
       } catch (error) {
-        console.dir(error);
+        if (error?.response?.error?.code == "VALIDATION_ERROR") {
+          const emailGroup = e.target.querySelector(".form-group");
+          emailGroup.classList.add("invalid");
+          emailGroup.querySelector(".error-message").textContent =
+            error?.response?.error?.details[0].message;
+        }
+        if (error?.response?.error?.code == "INVALID_CREDENTIALS") {
+          const password = e.target.querySelector(".form-group:nth-child(2)");
+          password.classList.add("invalid");
+          password.querySelector(".error-message").textContent =
+            error?.response?.error?.message;
+        }
       }
     });
 });
@@ -257,3 +268,9 @@ function showSigninLogin() {
 
   authButtons.classList.add("show");
 }
+import { showTodayBiggestHit, showPopularArtists } from "./utils/tracks.js";
+document.addEventListener("DOMContentLoaded", () => {
+  // Lấy dữ liệu cho home
+  showTodayBiggestHit();
+  showPopularArtists();
+});

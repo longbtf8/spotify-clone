@@ -1107,3 +1107,218 @@
   text-overflow: ellipsis;
   font-weight: 400;
 }
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  white-space: nowrap;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 8px;
+  background: #282828;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  z-index: 1000;
+}
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+@supports not selector(:focus-visible) {
+  [data-tooltip]:focus::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+}
+/* BOTTOM */
+[data-tooltip][data-tooltip-pos="bottom"]::after {
+  top: calc(100% + 10px);
+  bottom: auto;
+  left: 50%;
+  transform: translate(-50%, -4px);
+}
+[data-tooltip][data-tooltip-pos="bottom"]:hover::after,
+[data-tooltip][data-tooltip-pos="bottom"]:focus-visible::after {
+  transform: translate(-50%, 0);
+}
+
+/* LEFT */
+[data-tooltip][data-tooltip-pos="left"]::after {
+  right: calc(100% + 10px);
+  left: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translate(4px, -50%);
+}
+[data-tooltip][data-tooltip-pos="left"]:hover::after,
+[data-tooltip][data-tooltip-pos="left"]:focus-visible::after {
+  transform: translate(0, -50%);
+}
+
+/* RIGHT */
+[data-tooltip][data-tooltip-pos="right"]::after {
+  left: calc(100% + 10px);
+  right: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translate(-4px, -50%);
+}
+[data-tooltip][data-tooltip-pos="right"]:hover::after,
+[data-tooltip][data-tooltip-pos="right"]:focus-visible::after {
+  transform: translate(0, -50%);
+}
+/* ===== Spotify Sort/View Menu (refined version) ===== */
+.sort-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 230px;
+  background-color: #282828;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  z-index: var(--z-tooltip);
+  font-size: 14px;
+}
+.search-library {
+  position: relative;
+}
+.sort-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Section Titles */
+.menu-title {
+  padding: 6px 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #b3b3b3;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* Sort Options */
+.menu-item {
+  width: 100%;
+  padding: 10px 16px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.menu-item:hover {
+  background-color: #3e3e3e;
+}
+.menu-item.is-active {
+  color: #1db954;
+}
+.menu-item .checkmark {
+  opacity: 0;
+  font-size: 14px;
+  color: #1db954;
+}
+.menu-item.is-active .checkmark {
+  opacity: 1;
+}
+
+.menu-divider {
+  height: 1px;
+  background: #404040;
+  margin: 8px 0;
+}
+
+/* View section */
+.view-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 12px;
+}
+.view-btn {
+  height: 36px;
+  border-radius: 6px;
+  background-color: #2a2a2a;
+  color: #b3b3b3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.1s;
+}
+.view-btn:hover {
+  background-color: #3e3e3e;
+  color: #fff;
+  transform: translateY(-1px);
+}
+.view-btn.is-current {
+  background-color: #fff;
+  color: #121212;
+}
+
+/* ===== Sidebar Library: LIST VIEW (scoped, chuẩn Spotify) ===== */
+.sidebar .library-content.view--list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* nhịp dọc nhỏ hơn để không phồng */
+  padding: 0 8px 8px; /* chừa mép giống app */
+}
+
+.sidebar .library-content.view--list .library-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: transparent;
+  transition: background 0.12s ease;
+}
+.sidebar .library-content.view--list .library-item:hover {
+  background: #1b1b1b;
+}
+.sidebar .library-content.view--list .library-item.active {
+  background: #262626;
+}
+
+/* Cover 56px, bo 8px (đúng tỉ lệ ảnh bạn gửi) */
+.sidebar .library-content.view--list .item-image,
+.sidebar .library-content.view--list .item-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+}
+
+/* Typography */
+.sidebar .library-content.view--list .item-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.sidebar .library-content.view--list .item-subtitle {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+.artist-separate {
+  padding: 10px;
+  display: none;
+}
+.artist-separate.show {
+  display: block;
+}

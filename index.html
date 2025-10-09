@@ -43,10 +43,82 @@
             <button class="search-library-btn">
               <i class="fas fa-search"></i>
             </button>
-            <button class="sort-btn">
+            <button
+              class="sort-btn"
+              id="openSortMenu"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               Recents
               <i class="fas fa-list"></i>
             </button>
+            <div class="sort-menu" id="sortMenu" role="menu" aria-hidden="true">
+              <div class="menu-section">
+                <div class="menu-title">Sort by</div>
+                <button
+                  class="menu-item is-active"
+                  data-sort="recents"
+                  role="menuitemradio"
+                  aria-checked="true"
+                >
+                  <span>Recents</span>
+                  <i class="fa-solid fa-check checkmark"></i>
+                </button>
+                <button
+                  class="menu-item"
+                  data-sort="recently-added"
+                  role="menuitemradio"
+                  aria-checked="false"
+                >
+                  <span>Recently Added</span>
+                  <i class="fa-solid fa-check checkmark"></i>
+                </button>
+                <button
+                  class="menu-item"
+                  data-sort="alphabetical"
+                  role="menuitemradio"
+                  aria-checked="false"
+                >
+                  <span>Alphabetical</span>
+                  <i class="fa-solid fa-check checkmark"></i>
+                </button>
+                <button
+                  class="menu-item"
+                  data-sort="creator"
+                  role="menuitemradio"
+                  aria-checked="false"
+                >
+                  <span>Creator</span>
+                  <i class="fa-solid fa-check checkmark"></i>
+                </button>
+              </div>
+              <div class="menu-divider"></div>
+              <div class="menu-section">
+                <div class="menu-title">View as</div>
+                <div class="view-grid">
+                  <button
+                    class="view-btn"
+                    data-view="list-compact"
+                    aria-label="List compact"
+                  >
+                    <i class="fa-solid fa-bars-staggered"></i>
+                  </button>
+                  <button class="view-btn" data-view="list" aria-label="List">
+                    <i class="fa-solid fa-list"></i>
+                  </button>
+                  <button class="view-btn" data-view="grid" aria-label="Grid">
+                    <i class="fa-solid fa-border-all"></i>
+                  </button>
+                  <button
+                    class="view-btn is-current"
+                    data-view="grid-dense"
+                    aria-label="Grid dense"
+                  >
+                    <i class="fa-solid fa-table-cells"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="library-content">
@@ -119,7 +191,11 @@
         <header class="main-header">
           <div class="search-container">
             <div class="search-box">
-              <button class="home-btn">
+              <button
+                class="home-btn"
+                data-tooltip="Home"
+                data-tooltip-pos="bottom"
+              >
                 <i class="fas fa-home"></i>
               </button>
               <div class="search-input-wrapper">
@@ -158,7 +234,7 @@
           </div>
         </header>
 
-        <div class="content-wrapper">
+        <div class="content-wrapper show">
           <!-- Today's Biggest Hits Section -->
           <section class="hits-section">
             <div class="section-header">
@@ -347,7 +423,10 @@
               </div>
             </div>
           </section>
+        </div>
 
+        <!-- artist-separate -->
+        <div class="artist-separate">
           <!-- Artist Hero Section -->
           <section class="artist-hero">
             <div class="hero-background">
@@ -433,6 +512,7 @@
               </div>
             </div>
           </section>
+          <audio src="" id="audio"></audio>
         </div>
       </main>
 
@@ -448,26 +528,26 @@
             <div class="player-title">Yêu Một Người Sao Buồn Đến Thế</div>
             <div class="player-artist">Noo Phước Thịnh</div>
           </div>
-          <button class="add-btn">
+          <button class="add-btn" data-tooltip="Add to Your Episodes">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
 
         <div class="player-center">
           <div class="player-controls">
-            <button class="control-btn active">
+            <button class="control-btn active" data-tooltip="Enable shuffle">
               <i class="fas fa-random"></i>
             </button>
-            <button class="control-btn">
+            <button class="control-btn" data-tooltip="Previous">
               <i class="fas fa-step-backward"></i>
             </button>
             <button class="control-btn play-btn">
               <i class="fas fa-pause"></i>
             </button>
-            <button class="control-btn">
+            <button class="control-btn" data-tooltip="Next">
               <i class="fas fa-step-forward"></i>
             </button>
-            <button class="control-btn">
+            <button class="control-btn" data-tooltip="Repeat">
               <i class="fas fa-redo"></i>
             </button>
           </div>
@@ -482,11 +562,11 @@
         </div>
 
         <div class="player-right">
-          <button class="control-btn">
+          <button class="control-btn" data-tooltip="Lyrics">
             <i class="fas fa-microphone"></i>
           </button>
           <div class="volume-container">
-            <button class="control-btn">
+            <button class="control-btn" data-tooltip="Mute">
               <i class="fas fa-volume-down"></i>
             </button>
             <div class="volume-bar">
@@ -494,7 +574,7 @@
               <div class="volume-handle"></div>
             </div>
           </div>
-          <button class="control-btn">
+          <button class="control-btn" data-tooltip="Enter Full screen">
             <i class="fas fa-expand"></i>
           </button>
         </div>
