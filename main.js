@@ -268,9 +268,15 @@ function showSigninLogin() {
 
   authButtons.classList.add("show");
 }
-import { showTodayBiggestHit, showPopularArtists } from "./utils/tracks.js";
+import {
+  showTodayBiggestHit,
+  showPopularArtists,
+  playerSongHome,
+} from "./utils/tracks.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   // Lấy dữ liệu cho home
   showTodayBiggestHit();
   showPopularArtists();
+  playerSongHome();
 });

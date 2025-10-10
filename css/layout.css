@@ -238,3 +238,6 @@
   background: var(--bg-hover);
   background-clip: content-box;
 }
+.verified-badge i.show {
+  color: #4db3ff;
+}
