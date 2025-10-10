@@ -355,7 +355,7 @@ export async function playerSongHome() {
 
   document.addEventListener("mousemove", (e) => {
     if (isDraggingProgress) {
-      updateProgress(e);
+      updateProgress(e.clientX);
       progressHandle.classList.add("show");
       progressFill.classList.add("show");
       document.body.style.userSelect = "none";
@@ -418,6 +418,122 @@ export async function playerSongHome() {
       durationTimeEl.textContent = toMMSS(audio.duration);
     }
   }
+  // volume
+  const volumeBar = $(".volume-bar");
+  const volumeFill = $(".volume-fill");
+  const volumeHandle = $(".volume-handle");
+  let isDraggingVolume = false;
+
+  function updateVolume(clientX) {
+    const rect = volumeBar.getBoundingClientRect();
+    const percent = Math.max(
+      0,
+      Math.min(((clientX - rect.left) / rect.width) * 100, 100)
+    );
+    const volume = percent / 100;
+    audio.volume = volume;
+    document.documentElement.style.setProperty(
+      "--progressVolume",
+      `${percent}%`
+    );
+    localStorage.setItem("playerVolume", volume);
+    return percent;
+  }
+  // event volume
+  function checkVolume(volume) {
+    if (volume >= 50) {
+      $(`.volumeAudio i`).classList.add("fa-volume-up");
+      $(`.volumeAudio i`).classList.remove("fa-volume-down");
+    }
+    if (volume <= 50) {
+      $(`.volumeAudio i`).classList.remove("fa-volume-mute");
+      $(`.volumeAudio i`).classList.remove("fa-volume-up");
+      $(`.volumeAudio i`).classList.add("fa-volume-down");
+    }
+    console.log(volume);
+    if (volume === 0) {
+      $(`.volumeAudio i`).classList.remove("fa-volume-down");
+      $(`.volumeAudio i`).classList.add("fa-volume-mute");
+    }
+  }
+  // bật tắt audio
+  let lastVolume = 1;
+  $(`.volumeAudio i`).addEventListener("click", () => {
+    if (audio.volume > 0) {
+      lastVolume = audio.volume;
+      audio.volume = 0;
+      checkVolume(0);
+      document.documentElement.style.setProperty("--progressVolume", `0%`);
+    } else {
+      audio.volume = lastVolume;
+      checkVolume(lastVolume);
+      const percentVolume = lastVolume * 100;
+      document.documentElement.style.setProperty(
+        "--progressVolume",
+        `${percentVolume}%`
+      );
+    }
+  });
+  volumeBar.addEventListener("mousedown", (e) => {
+    isDraggingVolume = true;
+    updateVolume(e.clientX);
+    e.preventDefault();
+  });
+
+  volumeBar.addEventListener("touchstart", (e) => {
+    isDraggingVolume = true;
+    updateVolume(e.touches[0].clientX);
+  });
+  document.addEventListener("mouseup", (e) => {
+    if (isDraggingVolume) {
+      const volumePercent = updateVolume(e.clientX);
+      isDraggingVolume = false;
+
+      checkVolume(volumePercent);
+      volumeFill.classList.remove("show");
+
+      volumeHandle.classList.remove("show");
+    }
+  });
+
+  document.addEventListener("touchend", (e) => {
+    if (isDraggingVolume) {
+      const volumePercent = updateVolume(e.changedTouches[0].clientX);
+      checkVolume(volumePercent);
+      isDraggingVolume = false;
+      volumeHandle.classList.remove("show");
+      volumeFill.classList.remove("show");
+    }
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDraggingVolume) {
+      const volumePercent = updateVolume(e.clientX);
+      checkVolume(volumePercent);
+      volumeFill.classList.add("show");
+      volumeHandle.classList.add("show");
+    }
+  });
+
+  document.addEventListener("touchmove", (e) => {
+    if (isDraggingVolume) {
+      const volumePercent = updateVolume(e.touches[0].clientX);
+      checkVolume(volumePercent);
+      volumeFill.classList.add("show");
+      volumeHandle.classList.add("show");
+    }
+  });
+  const volumeAudio = localStorage.getItem("playerVolume");
+  if (volumeAudio) {
+    audio.volume = parseFloat(volumeAudio);
+    document.documentElement.style.setProperty(
+      "--progressVolume",
+      `${volumeAudio * 100}%`
+    );
+    const volumePercent = volumeAudio * 100;
+    checkVolume(volumePercent);
+  }
+
   audio.addEventListener("loadedmetadata", updateDuration);
   audio.addEventListener("durationchange", updateDuration);
   audio.addEventListener("canplay", updateDuration);

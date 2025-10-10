@@ -630,6 +630,9 @@
   position: relative;
   transition: all var(--transition-fast);
 }
+.volume-fill {
+  width: var(--progressVolume);
+}
 
 .progress-handle,
 .volume-handle {
@@ -645,13 +648,19 @@
   transition: all var(--transition-fast);
 }
 .progress-fill.show,
+.volume-fill.show,
+.volume-bar:hover .volume-fill,
 .progress-bar:hover .progress-fill {
   background-color: #1db954;
 }
 .progress-handle {
   left: calc(var(--progressWidth) - 3px);
 }
+.volume-handle {
+  left: calc(var(--progressVolume) - 3px);
+}
 .progress-handle.show,
+.volume-handle.show,
 .progress-bar:hover .progress-handle,
 .volume-bar:hover .volume-handle {
   opacity: 1;
