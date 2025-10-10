@@ -3,6 +3,10 @@ import httpRequest from "./httpRequest.js";
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+let currentContext = localStorage.getItem("currentContext") || "home";
+let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist")) || [];
+let currentTrackIndex =
+  parseInt(localStorage.getItem("currentTrackIndex")) || 0;
 export async function showTodayBiggestHit() {
   const hitsGrid = $(".hits-grid");
   try {
@@ -67,9 +71,21 @@ export async function playerSongHome() {
   const playerTitle = $(".player-title");
   const playerArtist = $(".player-artist");
   const audio = $("#audio");
-  hitsCards.forEach((hitsCard) => {
+  hitsCards.forEach((hitsCard, index) => {
     hitsCard.addEventListener("click", async () => {
       const id = hitsCard.dataset.trackId;
+
+      // cập nhật context và playlist
+      currentContext = "home";
+      currentPlaylist = Array.from(hitsCards).map(
+        (card) => card.dataset.trackId
+      );
+      currentTrackIndex = index;
+
+      // luu vao localstorage;
+      localStorage.setItem("currentContext", currentContext);
+      localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
+      localStorage.setItem("currentTrackIndex", currentTrackIndex);
       localStorage.setItem("currentSong", `${id}`);
 
       try {
@@ -149,10 +165,33 @@ export async function playerSongHome() {
           .join("");
         trackList.innerHTML = artistTrack;
         const trackItems = $$(".track-item");
-        trackItems.forEach((trackItem) => {
+        trackItems.forEach((trackItem, index) => {
           trackItem.addEventListener("click", async () => {
             const artistTrackId = trackItem.dataset.artistTrackId;
-            console.log(artistTrackId);
+
+            // Cập nhật context và playlist cho artist
+            currentContext = "artist";
+            currentPlaylist = Array.from(trackItems).map(
+              (item) => item.dataset.artistTrackId
+            );
+            currentTrackIndex = index;
+
+            // Lưu vào localStorage
+            localStorage.setItem("currentContext", currentContext);
+            localStorage.setItem(
+              "currentPlaylist",
+              JSON.stringify(currentPlaylist)
+            );
+            localStorage.setItem("currentTrackIndex", currentTrackIndex);
+            localStorage.setItem("currentSong", artistTrackId);
+
+            // Cập nhật context và playlist cho artist
+            currentContext = "artist";
+            currentPlaylist = Array.from(trackItems).map(
+              (item) => item.dataset.artistTrackId
+            );
+            currentTrackIndex = index;
+
             const track = await httpRequest.get(`tracks/${artistTrackId}`);
             playerImage.src = track.image_url;
             playerTitle.textContent = track.title;
@@ -174,6 +213,8 @@ export async function playerSongHome() {
       contentWrapper.classList.add("show");
       artistSeparate.classList.remove("show");
       trackList.innerHTML = "";
+      currentContext = "home";
+      localStorage.setItem("currentContext", "home");
     }
   });
   $(".logo i").addEventListener("click", () => {
@@ -181,6 +222,8 @@ export async function playerSongHome() {
       contentWrapper.classList.add("show");
       artistSeparate.classList.remove("show");
       trackList.innerHTML = "";
+      currentContext = "home";
+      localStorage.setItem("currentContext", "home");
     }
   });
 
@@ -203,17 +246,166 @@ export async function playerSongHome() {
       audioPause();
     }
   });
+
+  // function handle
+  async function handleNextSong() {
+    if (currentPlaylist.length === 0) return;
+    let nextTrackId;
+    if (isShuffle) {
+      nextTrackId = handleTurnShuffle();
+    } else {
+      currentTrackIndex =
+        (currentTrackIndex + currentPlaylist.length + 1) %
+        currentPlaylist.length;
+      nextTrackId = currentPlaylist[currentTrackIndex];
+    }
+    localStorage.setItem("currentTrackIndex", currentTrackIndex);
+    localStorage.setItem("currentSong", nextTrackId);
+    try {
+      const track = await httpRequest.get(`tracks/${nextTrackId}`);
+      updatePlayer(track);
+      await audioPlay();
+    } catch (error) {}
+  }
+  async function handlePrevSong() {
+    if (currentPlaylist.length === 0) return;
+    let prevTrackId;
+    if (isShuffle) {
+      prevTrackId = handleTurnShuffle();
+    } else {
+      currentTrackIndex =
+        (currentTrackIndex + currentPlaylist.length - 1) %
+        currentPlaylist.length;
+      prevTrackId = currentPlaylist[currentTrackIndex];
+    }
+    localStorage.setItem("currentTrackIndex", currentTrackIndex);
+    localStorage.setItem("currentSong", prevTrackId);
+    try {
+      const track = await httpRequest.get(`tracks/${prevTrackId}`);
+      updatePlayer(track);
+      await audioPlay();
+    } catch (error) {}
+  }
+  //  handle next/prev
+  const nextBtn = $(`button[data-tooltip="Next"]`);
+  const prevBtn = $(`button[data-tooltip="Previous"]`);
+  const repeatBtn = $(`button[data-tooltip="Repeat"]`);
+  const shuffleBtn = $(`.shuffle`);
+  let isRepeat = localStorage.getItem("isRepeat") === "true";
+  let isShuffle = localStorage.getItem("isShuffle") === "true";
+  repeatBtn.classList.toggle("active", isRepeat);
+  shuffleBtn.classList.toggle("active", isShuffle);
+  //progress
+  const progressHandle = $(".progress-handle");
+  const progressFill = $(".progress-fill");
+  const currentTimeEl = $(".time:first-child");
+  const durationTimeEl = $(".time:last-child");
+  const progressBar = $(".progress-bar");
+  let isDragging = false;
+
+  // event progress
+  function updateProgress(e) {
+    const rect = progressBar.getBoundingClientRect();
+    const percent = Math.max(
+      0,
+      Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)
+    );
+    document.documentElement.style.setProperty(
+      "--progressWidth",
+      `${percent}%`
+    );
+    const newTime = (percent * audio.duration) / 100;
+    currentTimeEl.textContent = toMMSS(newTime);
+    return newTime;
+  }
+  progressBar.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    updateProgress(e);
+  });
+  document.addEventListener("mouseup", (e) => {
+    if (isDragging) {
+      const newTime = updateProgress(e);
+      audio.currentTime = newTime;
+      isDragging = false;
+      progressHandle.classList.remove("show");
+      progressFill.classList.remove("show");
+      document.body.style.userSelect = "";
+    }
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      updateProgress(e);
+      progressHandle.classList.add("show");
+      progressFill.classList.add("show");
+      document.body.style.userSelect = "none";
+    }
+  });
+
+  //event player
+
+  nextBtn.addEventListener("click", () => {
+    handleNextSong();
+  });
+  prevBtn.addEventListener("click", () => {
+    handlePrevSong();
+  });
+  repeatBtn.addEventListener("click", () => {
+    isRepeat = !isRepeat;
+    repeatBtn.classList.toggle("active", isRepeat);
+    localStorage.setItem("isRepeat", isRepeat);
+  });
+  shuffleBtn.addEventListener("click", () => {
+    isShuffle = !isShuffle;
+    shuffleBtn.classList.toggle("active", isShuffle);
+    localStorage.setItem("isShuffle", isShuffle);
+  });
+  function handleTurnShuffle() {
+    currentTrackIndex = Math.floor(Math.random() * currentPlaylist.length);
+    return currentPlaylist[currentTrackIndex];
+  }
+  // audio
+  audio.addEventListener("ended", () => {
+    if (isRepeat) {
+      audio.play();
+      audio.currentTime = 0;
+    } else {
+      handleNextSong();
+    }
+  });
+  audio.addEventListener("timeupdate", () => {
+    if (!isDragging) {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      document.documentElement.style.setProperty(
+        "--progressWidth",
+        `${percent}%`
+      );
+      currentTimeEl.textContent = toMMSS(audio.currentTime);
+    }
+  });
+
+  //update duration
+  function updateDuration() {
+    if (audio.duration) {
+      durationTimeEl.textContent = toMMSS(audio.duration);
+    }
+  }
+  audio.addEventListener("loadedmetadata", updateDuration);
+  audio.addEventListener("durationchange", updateDuration);
+  audio.addEventListener("canplay", updateDuration);
   //  lấy ra hit hiện tại
   const currentSong = localStorage.getItem("currentSong");
   if (currentSong) {
     try {
       const track = await httpRequest.get(`tracks/${currentSong}`);
-      playerImage.src = `${track.image_url}`;
-      playerTitle.textContent = track.title;
-      playerArtist.textContent = track.artist_name;
-      audio.src = `${track.audio_url}`;
+      updatePlayer(track);
     } catch (error) {
       console.log(error);
     }
+  }
+  function updatePlayer(track) {
+    playerImage.src = `${track.image_url}`;
+    playerTitle.textContent = track.title;
+    playerArtist.textContent = track.artist_name;
+    audio.src = `${track.audio_url}`;
   }
 }
