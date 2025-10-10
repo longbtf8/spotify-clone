@@ -280,29 +280,32 @@ export async function playerSongHome() {
   async function handlePrevSong() {
     if (currentPlaylist.length === 0) return;
     let prevTrackId;
-    if (isShuffle) {
-      if (playedSongsInShuffle.length > 1) {
-        playedSongsInShuffle.pop();
-        prevTrackId = playedSongsInShuffle[playedSongsInShuffle - 1];
-        currentTrackIndex = currentPlaylist.indexOf(prevTrackId);
-      } else {
-        //Nếu không có bài trước, quay lại bài đầu tiên
-        prevTrackId = playedSongsInShuffle[0];
-      }
+
+    // Logic mới: Nếu shuffle đang bật VÀ đã có lịch sử (>1 bài), thì dùng lịch sử shuffle.
+    // Nếu không, sẽ lùi về bài trước đó theo thứ tự playlist gốc.
+    if (isShuffle && playedSongsInShuffle.length > 1) {
+      playedSongsInShuffle.pop(); // Bỏ bài hát hiện tại
+      prevTrackId = playedSongsInShuffle[playedSongsInShuffle.length - 1]; // Lấy bài trước đó
+      currentTrackIndex = currentPlaylist.indexOf(prevTrackId);
     } else {
+      // Fallback: Lùi bài theo thứ tự playlist gốc
       currentTrackIndex =
-        (currentTrackIndex + currentPlaylist.length - 1) %
+        (currentTrackIndex - 1 + currentPlaylist.length) %
         currentPlaylist.length;
       prevTrackId = currentPlaylist[currentTrackIndex];
     }
+
     localStorage.setItem("currentTrackIndex", currentTrackIndex);
     localStorage.setItem("currentSong", prevTrackId);
     try {
       const track = await httpRequest.get(`tracks/${prevTrackId}`);
       updatePlayer(track);
       await audioPlay();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Không thể lùi bài hát:", error);
+    }
   }
+
   //  handle next/prev
   const nextBtn = $(`button[data-tooltip="Next"]`);
   const prevBtn = $(`button[data-tooltip="Previous"]`);
@@ -409,9 +412,12 @@ export async function playerSongHome() {
     let availableTracks = currentPlaylist.filter(
       (trackId) => !playedSongsInShuffle.includes(trackId)
     );
-    if (availableTracks === 0) {
-      playedSongsInShuffle = [];
-      availableTracks = currentPlaylist;
+    if (availableTracks.length === 0) {
+      // Đặt lại lịch sử nhưng giữ lại bài hiện tại để không bị lặp lại ngay
+      playedSongsInShuffle = [currentPlaylist[currentTrackIndex]];
+      availableTracks = currentPlaylist.filter(
+        (trackId) => !playedSongsInShuffle.includes(trackId)
+      );
     }
     const randomIndex = Math.floor(Math.random() * availableTracks.length);
     const selectedTrackId = availableTracks[randomIndex];
