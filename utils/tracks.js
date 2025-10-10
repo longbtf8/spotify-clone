@@ -140,6 +140,7 @@ export async function playerSongHome() {
         //  lấy nhạc của artist
         const artistTrack = artistTracks.tracks
           .map((artistTrack, index) => {
+            console.log(artistTrack);
             return `<div class="track-item" data-artist-track-id="${
               artistTrack.id
             }">
@@ -153,7 +154,9 @@ export async function playerSongHome() {
                 <div class="track-info">
                   <div class="track-name">${artistTrack.title}</div>
                 </div>
-                <div class="track-plays">27,498,341</div>
+                <div class="track-plays">${(artistTrack.play_count || 27,
+                498,
+                341).toLocaleString()}</div>
                 <div class="track-duration">${toMMSS(
                   artistTrack.duration
                 )}</div>
@@ -167,6 +170,7 @@ export async function playerSongHome() {
         const trackItems = $$(".track-item");
         trackItems.forEach((trackItem, index) => {
           trackItem.addEventListener("click", async () => {
+            console.log(trackItem);
             const artistTrackId = trackItem.dataset.artistTrackId;
 
             // Cập nhật context và playlist cho artist
@@ -301,14 +305,14 @@ export async function playerSongHome() {
   const currentTimeEl = $(".time:first-child");
   const durationTimeEl = $(".time:last-child");
   const progressBar = $(".progress-bar");
-  let isDragging = false;
+  let isDraggingProgress = false;
 
   // event progress
-  function updateProgress(e) {
+  function updateProgress(clientX) {
     const rect = progressBar.getBoundingClientRect();
     const percent = Math.max(
       0,
-      Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)
+      Math.min(100, ((clientX - rect.left) / rect.width) * 100)
     );
     document.documentElement.style.setProperty(
       "--progressWidth",
@@ -319,22 +323,47 @@ export async function playerSongHome() {
     return newTime;
   }
   progressBar.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    updateProgress(e);
+    isDraggingProgress = true;
+    updateProgress(e.clientX);
+    e.preventDefault();
   });
+  progressBar.addEventListener("touchstart", (e) => {
+    isDraggingProgress = true;
+    updateDuration(e.touches[0].clientX);
+  });
+
   document.addEventListener("mouseup", (e) => {
-    if (isDragging) {
-      const newTime = updateProgress(e);
+    if (isDraggingProgress) {
+      const newTime = updateProgress(e.clientX);
       audio.currentTime = newTime;
-      isDragging = false;
+      isDraggingProgress = false;
       progressHandle.classList.remove("show");
       progressFill.classList.remove("show");
       document.body.style.userSelect = "";
     }
   });
+  document.addEventListener("touchend", (e) => {
+    if (isDraggingProgress) {
+      const newTime = updateProgress(e.changedTouches[0].clientX);
+      audio.currentTime = newTime;
+      isDraggingProgress = false;
+      progressHandle.classList.remove("show");
+      progressFill.classList.remove("show");
+      document.body.style.userSelect = "";
+    }
+  });
+
   document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
+    if (isDraggingProgress) {
       updateProgress(e);
+      progressHandle.classList.add("show");
+      progressFill.classList.add("show");
+      document.body.style.userSelect = "none";
+    }
+  });
+  document.addEventListener("touchmove", (e) => {
+    if (isDraggingProgress) {
+      updateProgress(e.touches[0].clientX);
       progressHandle.classList.add("show");
       progressFill.classList.add("show");
       document.body.style.userSelect = "none";
@@ -373,7 +402,7 @@ export async function playerSongHome() {
     }
   });
   audio.addEventListener("timeupdate", () => {
-    if (!isDragging) {
+    if (!isDraggingProgress) {
       const percent = (audio.currentTime / audio.duration) * 100;
       document.documentElement.style.setProperty(
         "--progressWidth",
