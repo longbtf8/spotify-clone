@@ -65,6 +65,7 @@ export async function showPopularArtists() {
     console.log(error);
   }
 }
+let playedSongsInShuffle = [];
 export async function playerSongHome() {
   const hitsCards = await showTodayBiggestHit();
   const playerImage = $(".player-image");
@@ -81,6 +82,8 @@ export async function playerSongHome() {
         (card) => card.dataset.trackId
       );
       currentTrackIndex = index;
+      // lấy id hiện tại
+      playedSongsInShuffle = [id];
 
       // luu vao localstorage;
       localStorage.setItem("currentContext", currentContext);
@@ -179,6 +182,7 @@ export async function playerSongHome() {
               (item) => item.dataset.artistTrackId
             );
             currentTrackIndex = index;
+            playedSongsInShuffle = [artistTrackId];
 
             // Lưu vào localStorage
             localStorage.setItem("currentContext", currentContext);
@@ -251,7 +255,7 @@ export async function playerSongHome() {
     }
   });
 
-  // function handle
+  // function handle next
   async function handleNextSong() {
     if (currentPlaylist.length === 0) return;
     let nextTrackId;
@@ -271,11 +275,20 @@ export async function playerSongHome() {
       await audioPlay();
     } catch (error) {}
   }
+  // function handle pre
+
   async function handlePrevSong() {
     if (currentPlaylist.length === 0) return;
     let prevTrackId;
     if (isShuffle) {
-      prevTrackId = handleTurnShuffle();
+      if (playedSongsInShuffle.length > 1) {
+        playedSongsInShuffle.pop();
+        prevTrackId = playedSongsInShuffle[playedSongsInShuffle - 1];
+        currentTrackIndex = currentPlaylist.indexOf(prevTrackId);
+      } else {
+        //Nếu không có bài trước, quay lại bài đầu tiên
+        prevTrackId = playedSongsInShuffle[0];
+      }
     } else {
       currentTrackIndex =
         (currentTrackIndex + currentPlaylist.length - 1) %
@@ -387,10 +400,26 @@ export async function playerSongHome() {
     isShuffle = !isShuffle;
     shuffleBtn.classList.toggle("active", isShuffle);
     localStorage.setItem("isShuffle", isShuffle);
+    // Reset shuffle history khi bật/tắt shuffle
+    playedSongsInShuffle = [currentPlaylist[currentTrackIndex]];
   });
+
+  // shuffle
   function handleTurnShuffle() {
-    currentTrackIndex = Math.floor(Math.random() * currentPlaylist.length);
-    return currentPlaylist[currentTrackIndex];
+    let availableTracks = currentPlaylist.filter(
+      (trackId) => !playedSongsInShuffle.includes(trackId)
+    );
+    if (availableTracks === 0) {
+      playedSongsInShuffle = [];
+      availableTracks = currentPlaylist;
+    }
+    const randomIndex = Math.floor(Math.random() * availableTracks.length);
+    const selectedTrackId = availableTracks[randomIndex];
+    playedSongsInShuffle.push(selectedTrackId);
+
+    currentTrackIndex = currentPlaylist.indexOf(selectedTrackId);
+
+    return selectedTrackId;
   }
   // audio
   audio.addEventListener("ended", () => {
