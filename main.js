@@ -156,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCurrentUser(user);
         showUserMenu();
         closeModal();
+        location.reload();
         try {
           const { user } = await httpRequest.get("users/me");
           updateCurrentUser(user);

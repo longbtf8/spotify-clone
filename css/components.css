@@ -1340,3 +1340,24 @@
 .artist-separate.show {
   display: block;
 }
+.following-btn {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: 1px solid var(--text-secondary);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  background-color: transparent;
+  transition: all var(--transition-fast);
+}
+
+.following-btn:hover {
+  border-color: var(--text-primary);
+  transform: scale(1.04);
+}
+
+.following-btn.active {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+}
