@@ -29,3 +29,28 @@ export function showFlowerArtist() {
     } catch (_) {}
   });
 }
+const id = hitsCard.dataset.trackId;
+
+// cập nhật context và playlist
+currentContext = "home";
+currentPlaylist = Array.from(hitsCards).map((card) => card.dataset.trackId);
+currentTrackIndex = index;
+// lấy id hiện tại
+playedSongsInShuffle = [id];
+
+// luu vao localstorage;
+localStorage.setItem("currentContext", currentContext);
+localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
+localStorage.setItem("currentTrackIndex", currentTrackIndex);
+localStorage.setItem("currentSong", `${id}`);
+
+try {
+  const track = await httpRequest.get(`tracks/${id}`);
+  playerImage.src = `${track.image_url}`;
+  playerTitle.textContent = track.title;
+  playerArtist.textContent = track.artist_name;
+  audio.src = `${track.audio_url}`;
+  audioPlay();
+} catch (error) {
+  console.log(error);
+}
