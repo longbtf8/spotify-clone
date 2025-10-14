@@ -35,7 +35,7 @@
           </div>
 
           <div class="nav-tabs">
-            <button class="nav-tab active">Playlists</button>
+            <button class="nav-tab playListBtn">Playlists</button>
             <button class="nav-tab artistBtn">Artists</button>
           </div>
 
@@ -676,7 +676,14 @@
         </div>
       </div>
     </div>
-    <div class="context-menu" id="contextMenu"></div>
+    <div class="context-menu" id="contextMenu">
+      <ul>
+        <li id="unfollow-option">
+          <i class="fas fa-times"></i>
+          <span>Unfollow</span>
+        </li>
+      </ul>
+    </div>
     <script src="main.js" type="module"></script>
   </body>
 </html>
