@@ -126,6 +126,7 @@ export async function playerSongHome() {
     artistCard.addEventListener("click", async () => {
       const id = artistCard.dataset.artistId;
       const followBtn = $(".following-btn");
+
       const updateFollowState = (isFollowing) => {
         if (isFollowing) {
           followBtn.textContent = "Following";

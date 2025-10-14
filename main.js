@@ -1,5 +1,10 @@
 import httpRequest from "./utils/httpRequest.js";
-
+import {
+  showTodayBiggestHit,
+  showPopularArtists,
+  playerSongHome,
+} from "./utils/tracks.js";
+import { showFlowerArtist } from "./utils/library.js";
 // Auth Modal Functionality
 document.addEventListener("DOMContentLoaded", function () {
   // Get DOM elements
@@ -269,15 +274,11 @@ function showSigninLogin() {
 
   authButtons.classList.add("show");
 }
-import {
-  showTodayBiggestHit,
-  showPopularArtists,
-  playerSongHome,
-} from "./utils/tracks.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // Lấy dữ liệu cho home
   showTodayBiggestHit();
   showPopularArtists();
   playerSongHome();
+  showFlowerArtist();
 });
