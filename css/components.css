@@ -1407,3 +1407,67 @@
   font-size: 16px;
 }
 /* === KẾT THÚC THAY ĐỔI === */
+
+/* === BẮT ĐẦU THÊM MỚI: PLAYLIST MODAL STYLING === */
+.playlist-modal-container {
+  max-width: 520px;
+}
+
+.playlist-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.playlist-details {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+}
+
+.playlist-cover-art {
+  width: 180px;
+  height: 180px;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.playlist-cover-art i {
+  font-size: 64px;
+  color: var(--text-muted);
+}
+
+.playlist-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.playlist-inputs textarea {
+  resize: none;
+  height: 112px;
+}
+
+.playlist-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-lg);
+}
+
+.playlist-actions .disclaimer {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: left;
+  width: 100%;
+}
+
+.playlist-actions .auth-submit-btn {
+  width: auto;
+  min-width: 120px;
+}

@@ -676,6 +676,55 @@
         </div>
       </div>
     </div>
+    <div class="modal-overlay" id="playlistModal">
+      <div class="modal-container playlist-modal-container">
+        <button class="modal-close" id="playlistModalClose">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <div class="modal-content">
+          <h1 class="modal-heading">Create Playlist</h1>
+
+          <form class="playlist-form" id="playlistForm">
+            <div class="playlist-details">
+              <div class="playlist-cover-art">
+                <i class="fas fa-music"></i>
+                <input
+                  type="file"
+                  name="createPlaylist"
+                  id="createPlaylist"
+                  accept="image/*"
+                />
+              </div>
+              <div class="playlist-inputs">
+                <input
+                  type="text"
+                  id="playlistName"
+                  placeholder="My Playlist #1"
+                  class="form-input"
+                  required
+                />
+                <textarea
+                  id="playlistDescription"
+                  placeholder="Add an optional description"
+                  class="form-input"
+                  rows="4"
+                ></textarea>
+              </div>
+            </div>
+            <div class="playlist-actions">
+              <p class="disclaimer">
+                By proceeding, you agree to give Spotify access to the image you
+                choose to upload. Please make sure you have the right to upload
+                the image.
+              </p>
+              <button type="submit" class="auth-submit-btn">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <div class="context-menu" id="contextMenu">
       <ul>
         <li id="unfollow-option">

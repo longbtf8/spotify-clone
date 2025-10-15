@@ -5,6 +5,7 @@ import {
   playerSongHome,
 } from "./utils/tracks.js";
 import { showFlowerArtist } from "./utils/library.js";
+import { initPlayListManager } from "./utils/playlist.js";
 // Auth Modal Functionality
 document.addEventListener("DOMContentLoaded", function () {
   // Get DOM elements
@@ -281,4 +282,5 @@ document.addEventListener("DOMContentLoaded", () => {
   showPopularArtists();
   playerSongHome();
   showFlowerArtist();
+  initPlayListManager();
 });
