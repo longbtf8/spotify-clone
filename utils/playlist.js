@@ -10,13 +10,14 @@ const artistSeparate = $(".artist-separate");
 const playlistSeparate = $(".playlist-separate");
 const playlistForm = $("#playlistForm");
 const playlistCoverInput = $("#createPlaylist");
-const playlistCoverArt = playlistForm.querySelector(".playlist-cover-art");
+const playlistCoverPreview = $("#playlistCoverPreview");
+
 let currentEditingPlaylistId = null;
-const selectedCoverFile = null;
+let selectedCoverFile = null;
 
 export function initPlayListManager() {
   createBtn.addEventListener("click", handleCreatePlaylist);
-  playlistForm.addEventListener("submit", async () => {
+  playlistForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!currentEditingPlaylistId) return;
     const name = $("#playlistName").value;
@@ -52,7 +53,7 @@ export function initPlayListManager() {
       selectedCoverFile = file; // Lưu file đã chọn
       const reader = new FileReader();
       reader.onload = (event) => {
-        playlistCoverArt.innerHTML = `<img src="${event.target.result}" alt="Cover Preview">`;
+        playlistCoverPreview.innerHTML = `<img src="${event.target.result}" alt="Cover Preview">`;
       };
       reader.readAsDataURL(file);
     }
@@ -92,9 +93,9 @@ const openEditModal = (playlist) => {
   $("#playlistDescription").value = playlist.description;
   // Hiển thị ảnh bìa hiện tại của playlist trong modal
   if (playlist.image_url) {
-    playlistCoverArt.innerHTML = `<img src="${playlist.image_url}" alt="Current Cover">`;
+    playlistCoverPreview.innerHTML = `<img src="${playlist.image_url}" alt="Current Cover">`;
   } else {
-    playlistCoverArt.innerHTML = '<i class="fas fa-music"></i>';
+    playlistCoverPreview.innerHTML = '<i class="fas fa-music"></i>';
   }
   playlistModal.classList.add("show");
   document.body.style.overflow = "hidden";
@@ -105,7 +106,7 @@ const closeModal = () => {
   document.body.style.overflow = "auto";
   currentEditingPlaylistId = null; // Reset ID khi đóng
   selectedCoverFile = null; // Reset file đã chọn
-  playlistCoverArt.innerHTML = '<i class="fas fa-music"></i>';
+  playlistCoverPreview.innerHTML = '<i class="fas fa-music"></i>';
 };
 playlistModalCloseBtn.addEventListener("click", closeModal);
 playlistModal.addEventListener("click", (e) => {
