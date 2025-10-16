@@ -13,6 +13,7 @@ export async function handleArtistClick(artistCard) {
   const id = artistCard.dataset.artistId;
   const contentWrapper = $(".content-wrapper");
   const artistSeparate = $(".artist-separate");
+  const playlistSeparate = $(".playlist-separate ");
   const heroImage = $(".hero-image");
   const artistName = $(".artist-name");
   const monthlyListeners = $(".monthly-listeners");
@@ -50,6 +51,7 @@ export async function handleArtistClick(artistCard) {
     const artistInformation = await httpRequest.get(`artists/${id}`);
     contentWrapper.classList.remove("show");
     artistSeparate.classList.add("show");
+    playlistSeparate.classList.remove("show");
     heroImage.src = `${artistInformation.background_image_url}`;
     artistName.textContent = artistInformation.name;
     monthlyListeners.textContent = `${artistInformation.monthly_listeners} monthly listeners `;

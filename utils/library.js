@@ -32,7 +32,61 @@ unfollowBtn.addEventListener("click", async () => {
     }
   }
 });
-export function showFlowerArtist() {
+export async function loadAndDisplayPlaylists() {
+  const libraryContent = $(".library-content");
+  $(".playListBtn").classList.add("active");
+  $(".artistBtn").classList.remove("active");
+  try {
+    const data = await httpRequest.get("me/playlists");
+    const playLists = data.playLists;
+    let html = `
+      <div class="library-item active">
+        <div class="item-icon liked-songs">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="item-info">
+          <div class="item-title">Liked Songs</div>
+          <div class="item-subtitle">
+            <i class="fas fa-thumbtack"></i>
+            Playlist • 3 songs
+          </div>
+        </div>
+      </div>`;
+    if (playLists) {
+      html += playLists
+        .map(
+          (playlist) => `
+      <div class="library-item" data-playlist-id="${playlist.id}">
+        <img src="${
+          playlist.image_url || "placeholder.svg?height=48&width=48"
+        }" alt="${playlist.name}" class="item-image" />
+        <div class="item-info">
+          <div class="item-title">${playlist.name}</div>
+          <div class="item-subtitle">Playlist • ${playlist.user_name}</div>
+        </div>
+      </div>`
+        )
+        .join("");
+    }
+    libraryContent.innerHTML = html;
+  } catch (error) {
+    alert("Không thể tải playlist. Bạn có thể chưa đăng nhập.", error);
+    libraryContent.innerHTML = `
+      <div class="library-item active">
+        <div class="item-icon liked-songs">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="item-info">
+          <div class="item-title">Liked Songs</div>
+          <div class="item-subtitle">
+            <i class="fas fa-thumbtack"></i>
+            Playlist • 3 songs
+          </div>
+        </div>
+      </div>`;
+  }
+}
+export function setupLibraryTabs() {
   const artistBtn = $(".artistBtn");
   const playListBtn = $(".playListBtn");
   const libraryContent = $(".library-content");
@@ -82,4 +136,8 @@ export function showFlowerArtist() {
       }
     } catch (_) {}
   });
+  playListBtn.addEventListener("click", loadAndDisplayPlaylists);
+
+  // Mặc định tải danh sách playlist khi khởi động
+  loadAndDisplayPlaylists();
 }

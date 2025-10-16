@@ -4,7 +4,7 @@ import {
   showPopularArtists,
   playerSongHome,
 } from "./utils/tracks.js";
-import { showFlowerArtist } from "./utils/library.js";
+import { setupLibraryTabs } from "./utils/library.js";
 import { initPlayListManager } from "./utils/playlist.js";
 // Auth Modal Functionality
 document.addEventListener("DOMContentLoaded", function () {
@@ -281,6 +281,6 @@ document.addEventListener("DOMContentLoaded", () => {
   showTodayBiggestHit();
   showPopularArtists();
   playerSongHome();
-  showFlowerArtist();
+  setupLibraryTabs();
   initPlayListManager();
 });

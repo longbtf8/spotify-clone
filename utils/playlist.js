@@ -1,5 +1,6 @@
 import httpRequest from "./httpRequest.js";
 import { $, $$ } from "./commonPage.js";
+import { loadAndDisplayPlaylists } from "./library.js";
 
 const createBtn = $(".create-btn");
 const playlistModal = $("#playlistModal");
@@ -10,10 +11,19 @@ const playlistSeparate = $(".playlist-separate");
 export function initPlayListManager() {
   createBtn.addEventListener("click", handleCreatePlaylist);
 }
-export function handleCreatePlaylist() {
-  contentWrapper.classList.remove("show");
-  artistSeparate.classList.remove("show");
-  playlistSeparate.classList.add("show");
+async function handleCreatePlaylist() {
+  try {
+    await httpRequest.post("playlists", {
+      name: "My PlayList",
+      description: "",
+    });
+    contentWrapper.classList.remove("show");
+    artistSeparate.classList.remove("show");
+    playlistSeparate.classList.add("show");
+    await loadAndDisplayPlaylists();
+  } catch (error) {
+    console.error("Lỗi khi tạo playlist:", error);
+  }
 }
 
 // Đóng modal
