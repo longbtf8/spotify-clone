@@ -87,7 +87,8 @@ export async function playerSongHome() {
       // luu vao localstorage;
       localStorage.setItem("currentContext", currentContext);
       localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
-      localStorage.setItem("currentTrackIndex", currentTrackIndex);
+      localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
+
       localStorage.setItem("currentSong", `${id}`);
 
       try {
@@ -210,7 +211,8 @@ export async function playerSongHome() {
         currentPlaylist.length;
       nextTrackId = currentPlaylist[currentTrackIndex];
     }
-    localStorage.setItem("currentTrackIndex", currentTrackIndex);
+    localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
+
     localStorage.setItem("currentSong", nextTrackId);
     try {
       const track = await httpRequest.get(`tracks/${nextTrackId}`);
@@ -238,7 +240,8 @@ export async function playerSongHome() {
       prevTrackId = currentPlaylist[currentTrackIndex];
     }
 
-    localStorage.setItem("currentTrackIndex", currentTrackIndex);
+    localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
+
     localStorage.setItem("currentSong", prevTrackId);
     try {
       const track = await httpRequest.get(`tracks/${prevTrackId}`);

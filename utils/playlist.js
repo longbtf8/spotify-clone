@@ -26,7 +26,7 @@ export function initPlayListManager() {
     try {
       if (selectedCoverFile) {
         const formData = new FormData();
-        formData.append("cover_file", selectedCoverFile);
+        formData.append("cover", selectedCoverFile);
         await httpRequest.post(
           `upload/playlist/${currentEditingPlaylistId}/cover`,
           formData
@@ -39,8 +39,8 @@ export function initPlayListManager() {
       });
       closeModal();
       // Tải lại cả chi tiết playlist
-      handlePlaylistClick(currentEditingPlaylistId);
-      loadAndDisplayPlaylists();
+      await handlePlaylistClick(currentEditingPlaylistId);
+      await loadAndDisplayPlaylists();
       alert("Cập nhật playlist thành công!");
     } catch (error) {
       alert("Lỗi khi cập nhật playlist.");
