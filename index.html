@@ -122,7 +122,7 @@
           </div>
 
           <div class="library-content">
-            <div class="library-item active">
+            <!-- <div class="library-item active">
               <div class="item-icon liked-songs">
                 <i class="fas fa-heart"></i>
               </div>
@@ -133,7 +133,7 @@
                   Playlist • 3 songs
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="library-item">
               <img
@@ -766,9 +766,13 @@
 
     <div class="context-menu" id="contextMenu">
       <ul>
-        <li id="unfollow-option">
+        <li id="unfollow-artist-option" class="context-menu-item">
           <i class="fas fa-times"></i>
           <span>Unfollow</span>
+        </li>
+        <li id="delete-playlist-option" class="context-menu-item">
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
         </li>
       </ul>
     </div>

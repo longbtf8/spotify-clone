@@ -1,11 +1,13 @@
 import httpRequest from "./httpRequest.js";
 import { handleArtistClick } from "./artist.js";
+import { handlePlaylistClick } from "./playlist.js";
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 const contextMenu = $("#contextMenu");
-const unfollowBtn = $("#unfollow-option");
-unfollowBtn.addEventListener("click", async () => {
+const unfollowArtistBtn = $("#unfollow-artist-option");
+const deletePlaylistBtn = $("#delete-playlist-option");
+unfollowArtistBtn.addEventListener("click", async () => {
   const artistId = contextMenu.dataset.artistId;
   if (artistId) {
     try {
@@ -32,6 +34,24 @@ unfollowBtn.addEventListener("click", async () => {
     }
   }
 });
+deletePlaylistBtn.addEventListener("click", async () => {
+  const playlistId = contextMenu.dataset.playlistId;
+  if (!playlistId) return;
+
+  try {
+    if (window.confirm(`Bạn có chắc muốn xóa playlist này không?`)) {
+      await httpRequest.del(`playlists/${playlistId}`);
+      $(`.library-item[data-playlist-id="${playlistId}"]`)?.remove();
+      alert("Đã xóa playlist thành công.");
+    }
+  } catch (error) {
+    alert("Có lỗi xảy ra khi xóa playlist.");
+    console.error("Lỗi khi xóa playlist:", error);
+  } finally {
+    contextMenu.classList.remove("show");
+  }
+});
+
 export async function loadAndDisplayPlaylists() {
   const libraryContent = $(".library-content");
   $(".playListBtn").classList.add("active");
@@ -40,19 +60,7 @@ export async function loadAndDisplayPlaylists() {
     const data = await httpRequest.get("me/playlists");
     console.log(data);
     const playLists = data.playlists;
-    let html = `
-      <div class="library-item active">
-        <div class="item-icon liked-songs">
-          <i class="fas fa-heart"></i>
-        </div>
-        <div class="item-info">
-          <div class="item-title">Liked Songs</div>
-          <div class="item-subtitle">
-            <i class="fas fa-thumbtack"></i>
-            Playlist • 3 songs
-          </div>
-        </div>
-      </div>`;
+    let html = "";
     if (playLists) {
       html += playLists
         .map(
@@ -70,6 +78,25 @@ export async function loadAndDisplayPlaylists() {
         .join("");
     }
     libraryContent.innerHTML = html;
+    $$(".library-item[data-playlist-id]").forEach((item) => {
+      item.addEventListener("click", () => {
+        const playlistId = item.dataset.playlistId;
+        const currentActiveItem = libraryContent.querySelector(
+          ".library-item.active"
+        );
+        if (currentActiveItem) {
+          currentActiveItem.classList.remove("active");
+        }
+        item.classList.add("active");
+
+        handlePlaylistClick(playlistId);
+      });
+
+      item.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        showContextMenu(e, { playlistId: item.dataset.playlistId });
+      });
+    });
   } catch (error) {
     alert("Không thể tải playlist. Bạn có thể chưa đăng nhập.", error);
     libraryContent.innerHTML = `
@@ -87,6 +114,8 @@ export async function loadAndDisplayPlaylists() {
       </div>`;
   }
 }
+
+//  set up hiển thị playlist artist hoặc playlist
 export function setupLibraryTabs() {
   const artistBtn = $(".artistBtn");
   const playListBtn = $(".playListBtn");
@@ -119,7 +148,6 @@ export function setupLibraryTabs() {
             const currentActiveItem = libraryContent.querySelector(
               ".library-item.active"
             );
-            console.log(currentActiveItem);
             if (currentActiveItem) {
               currentActiveItem.classList.remove("active");
             }
@@ -128,10 +156,7 @@ export function setupLibraryTabs() {
           });
           item.addEventListener("contextmenu", (e) => {
             e.preventDefault();
-            contextMenu.dataset.artistId = item.dataset.artistId;
-            contextMenu.style.top = `${e.clientY}px`;
-            contextMenu.style.left = `${e.clientX}px`;
-            contextMenu.classList.add("show");
+            showContextMenu(e, { artistId: item.dataset.artistId });
           });
         });
       }
@@ -141,4 +166,24 @@ export function setupLibraryTabs() {
 
   // Mặc định tải danh sách playlist khi khởi động
   loadAndDisplayPlaylists();
+}
+function showContextMenu(e, { artistId, playlistId }) {
+  contextMenu.style.top = `${e.clientY}px`;
+  contextMenu.style.left = `${e.clientX}px`;
+  // Reset
+  contextMenu.removeAttribute("data-artist-id");
+  contextMenu.removeAttribute("data-playlist-id");
+  unfollowArtistBtn.style.display = "none";
+  deletePlaylistBtn.style.display = "none";
+  if (artistId) {
+    contextMenu.dataset.artistId = artistId;
+    unfollowArtistBtn.style.display = "flex";
+  }
+
+  if (playlistId) {
+    contextMenu.dataset.playlistId = playlistId;
+    deletePlaylistBtn.style.display = "flex";
+  }
+
+  contextMenu.classList.add("show");
 }
