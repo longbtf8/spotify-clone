@@ -80,7 +80,8 @@ export async function handleArtistClick(artistCard) {
           "currentPlaylist",
           JSON.stringify(currentPlaylist)
         );
-        localStorage.setItem("currentTrackIndex", currentTrackIndex);
+        localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
+
         localStorage.setItem("currentSong", firstTrackId);
 
         updatePlayer(firstTrack);
@@ -133,7 +134,8 @@ export async function handleArtistClick(artistCard) {
           "currentPlaylist",
           JSON.stringify(currentPlaylist)
         );
-        localStorage.setItem("currentTrackIndex", currentTrackIndex);
+        localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
+
         localStorage.setItem("currentSong", artistTrackId);
 
         // Cập nhật context và playlist cho artist

@@ -201,6 +201,12 @@ export async function playerSongHome() {
 
   // function handle next
   async function handleNextSong() {
+    const currentPlaylist =
+      JSON.parse(localStorage.getItem("currentPlaylist")) || [];
+    let currentTrackIndex =
+      parseInt(localStorage.getItem("currentTrackIndex")) || 0;
+    const isShuffle = localStorage.getItem("isShuffle") === "true";
+
     if (currentPlaylist.length === 0) return;
     let nextTrackId;
     if (isShuffle) {
@@ -223,6 +229,12 @@ export async function playerSongHome() {
   // function handle pre
 
   async function handlePrevSong() {
+    const currentPlaylist =
+      JSON.parse(localStorage.getItem("currentPlaylist")) || [];
+    let currentTrackIndex =
+      parseInt(localStorage.getItem("currentTrackIndex")) || 0;
+    const isShuffle = localStorage.getItem("isShuffle") === "true";
+
     if (currentPlaylist.length === 0) return;
     let prevTrackId;
 
@@ -355,6 +367,11 @@ export async function playerSongHome() {
 
   // shuffle
   function handleTurnShuffle() {
+    const currentPlaylist =
+      JSON.parse(localStorage.getItem("currentPlaylist")) || [];
+    let currentTrackIndex =
+      parseInt(localStorage.getItem("currentTrackIndex")) || 0;
+
     let availableTracks = currentPlaylist.filter(
       (trackId) => !playedSongsInShuffle.includes(trackId)
     );
@@ -370,6 +387,7 @@ export async function playerSongHome() {
     playedSongsInShuffle.push(selectedTrackId);
 
     currentTrackIndex = currentPlaylist.indexOf(selectedTrackId);
+    localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
 
     return selectedTrackId;
   }
