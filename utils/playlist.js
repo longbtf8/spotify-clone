@@ -9,11 +9,56 @@ const contentWrapper = $(".content-wrapper");
 const artistSeparate = $(".artist-separate");
 const playlistSeparate = $(".playlist-separate");
 const playlistForm = $("#playlistForm");
+const playlistCoverInput = $("#createPlaylist");
+const playlistCoverArt = playlistForm.querySelector(".playlist-cover-art");
 let currentEditingPlaylistId = null;
+const selectedCoverFile = null;
 
 export function initPlayListManager() {
   createBtn.addEventListener("click", handleCreatePlaylist);
+  playlistForm.addEventListener("submit", async () => {
+    e.preventDefault();
+    if (!currentEditingPlaylistId) return;
+    const name = $("#playlistName").value;
+    const description = $("#playlistDescription").value;
+    //  anh
+    try {
+      if (selectedCoverFile) {
+        const formData = new FormData();
+        formData.append("cover_file", selectedCoverFile);
+        await httpRequest.post(
+          `upload/playlist/${currentEditingPlaylistId}/cover`,
+          formData
+        );
+      }
+      //  Cập nhật tên và mô tả
+      await httpRequest.put(`playlists/${currentEditingPlaylistId}`, {
+        name,
+        description,
+      });
+      closeModal();
+      // Tải lại cả chi tiết playlist
+      handlePlaylistClick(currentEditingPlaylistId);
+      loadAndDisplayPlaylists();
+      alert("Cập nhật playlist thành công!");
+    } catch (error) {
+      alert("Lỗi khi cập nhật playlist.");
+      console.error("Update playlist error:", error);
+    }
+  });
+  playlistCoverInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      selectedCoverFile = file; // Lưu file đã chọn
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        playlistCoverArt.innerHTML = `<img src="${event.target.result}" alt="Cover Preview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 }
+
 async function handleCreatePlaylist() {
   try {
     await httpRequest.post("playlists", {
@@ -29,7 +74,6 @@ async function handleCreatePlaylist() {
 export async function handlePlaylistClick(playlistId) {
   try {
     const playlistData = await httpRequest.get(`playlists/${playlistId}`);
-    console.log(playlistData);
     // Điền thông tin vào hero section
     $("#playlistDetailImage").src = playlistData.image_url || "placeholder.svg";
     $("#playlistDetailName").textContent = playlistData.name;
@@ -46,6 +90,12 @@ const openEditModal = (playlist) => {
   currentEditingPlaylistId = playlist.id;
   $("#playlistName").value = playlist.name;
   $("#playlistDescription").value = playlist.description;
+  // Hiển thị ảnh bìa hiện tại của playlist trong modal
+  if (playlist.image_url) {
+    playlistCoverArt.innerHTML = `<img src="${playlist.image_url}" alt="Current Cover">`;
+  } else {
+    playlistCoverArt.innerHTML = '<i class="fas fa-music"></i>';
+  }
   playlistModal.classList.add("show");
   document.body.style.overflow = "hidden";
 };
@@ -54,6 +104,8 @@ const closeModal = () => {
   playlistModal.classList.remove("show");
   document.body.style.overflow = "auto";
   currentEditingPlaylistId = null; // Reset ID khi đóng
+  selectedCoverFile = null; // Reset file đã chọn
+  playlistCoverArt.innerHTML = '<i class="fas fa-music"></i>';
 };
 playlistModalCloseBtn.addEventListener("click", closeModal);
 playlistModal.addEventListener("click", (e) => {

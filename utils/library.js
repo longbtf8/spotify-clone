@@ -58,7 +58,6 @@ export async function loadAndDisplayPlaylists() {
   $(".artistBtn").classList.remove("active");
   try {
     const data = await httpRequest.get("me/playlists");
-    console.log(data);
     const playLists = data.playlists;
     let html = "";
     if (playLists) {
