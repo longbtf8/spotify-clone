@@ -9,10 +9,11 @@ class HttpRequest {
         method,
         headers: {
           ...options.headers,
-          "Content-Type": "application/json",
         },
       };
       if (data && !(data instanceof FormData)) {
+        _options.headers["Content-Type"] = "application/json";
+
         _options.body = JSON.stringify(data);
       } else if (data) {
         _options.body = data;

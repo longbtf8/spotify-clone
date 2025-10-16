@@ -4,11 +4,16 @@ import { $, $$ } from "./commonPage.js";
 const createBtn = $(".create-btn");
 const playlistModal = $("#playlistModal");
 const playlistModalCloseBtn = $("#playlistModalClose");
+const contentWrapper = $(".content-wrapper");
+const artistSeparate = $(".artist-separate");
+const playlistSeparate = $(".playlist-separate");
 export function initPlayListManager() {
   createBtn.addEventListener("click", handleCreatePlaylist);
 }
 export function handleCreatePlaylist() {
-  playlistModal.classList.add("show");
+  contentWrapper.classList.remove("show");
+  artistSeparate.classList.remove("show");
+  playlistSeparate.classList.add("show");
 }
 
 // Đóng modal

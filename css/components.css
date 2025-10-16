@@ -1406,7 +1406,6 @@
 .context-menu ul li i {
   font-size: 16px;
 }
-/* === KẾT THÚC THAY ĐỔI === */
 
 /* === BẮT ĐẦU THÊM MỚI: PLAYLIST MODAL STYLING === */
 .playlist-modal-container {
@@ -1484,4 +1483,112 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* === BẮT ĐẦU THÊM MỚI: PLAYLIST DETAIL VIEW STYLING === */
+.playlist-separate {
+  padding: 10px;
+  display: none; /* Ẩn mặc định */
+}
+.playlist-separate.show {
+  display: block;
+}
+
+.playlist-hero {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+.playlist-hero-cover {
+  width: 232px;
+  height: 232px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.playlist-hero-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playlist-hero-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.playlist-type {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+}
+
+.playlist-hero-info h1 {
+  font-size: 96px;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.playlist-creator {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: var(--spacing-md);
+}
+
+.playlist-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+}
+
+.edit-playlist-btn i {
+  font-size: 24px;
+}
+/* ... */
+
+/* Tablet */
+@media (max-width: 1023px) and (min-width: 768px) {
+  /* ... (Các quy tắc đã có) ... */
+
+  /* === BẮT ĐẦU THÊM MỚI: ĐIỀU CHỈNH FONT CHO PLAYLIST VIEW === */
+  .playlist-hero-cover {
+    width: 192px;
+    height: 192px;
+  }
+
+  .playlist-hero-info h1 {
+    font-size: 60px; /* Giảm kích thước font tên playlist */
+  }
+  /* === KẾT THÚC THÊM MỚI === */
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  /* ... (Các quy tắc đã có) ... */
+
+  /* === BẮT ĐẦU THÊM MỚI: ĐIỀU CHỈNH FONT VÀ LAYOUT CHO PLAYLIST VIEW === */
+  .playlist-hero {
+    flex-direction: column; /* Chuyển sang layout dọc */
+    align-items: center;
+    text-align: center;
+    padding-top: var(--spacing-lg);
+  }
+
+  .playlist-hero-info h1 {
+    font-size: 48px; /* Giảm font đáng kể cho mobile */
+  }
+
+  .playlist-creator {
+    font-size: 16px;
+  }
 }

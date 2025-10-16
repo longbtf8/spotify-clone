@@ -154,12 +154,14 @@ export async function playerSongHome() {
   });
   const contentWrapper = $(".content-wrapper");
   const artistSeparate = $(".artist-separate");
+  const playlistSeparate = $(".playlist-separate");
   const trackList = $(".track-list");
   // click Home
   $(".home-btn").addEventListener("click", () => {
     {
       contentWrapper.classList.add("show");
       artistSeparate.classList.remove("show");
+      playlistSeparate.classList.remove("show");
       trackList.innerHTML = "";
       currentContext = "home";
       localStorage.setItem("currentContext", "home");
@@ -168,6 +170,7 @@ export async function playerSongHome() {
   $(".logo i").addEventListener("click", () => {
     {
       contentWrapper.classList.add("show");
+      playlistSeparate.classList.remove("show");
       artistSeparate.classList.remove("show");
       trackList.innerHTML = "";
       currentContext = "home";

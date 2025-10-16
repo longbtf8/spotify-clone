@@ -515,6 +515,44 @@
           </section>
           <audio src="" id="audio"></audio>
         </div>
+
+        <div class="playlist-separate">
+          <section class="playlist-hero">
+            <label for="playlistCoverUpload" class="playlist-hero-cover">
+              <img
+                src="placeholder.svg"
+                alt="Playlist Cover"
+                id="playlistDetailImage"
+              />
+              <input
+                type="file"
+                id="playlistCoverUpload"
+                accept="image/*"
+                class="visually-hidden"
+              />
+            </label>
+            <div class="playlist-hero-info">
+              <p class="playlist-type">Public Playlist</p>
+              <h1 id="playlistDetailName">My Playlist #2</h1>
+              <p class="playlist-creator" id="playlistDetailCreator">
+                Bùi Thành Long
+              </p>
+            </div>
+          </section>
+
+          <section class="playlist-controls">
+            <button class="play-btn-large">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="control-btn edit-playlist-btn" id="editPlaylistBtn">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </section>
+
+          <section class="playlist-tracks-section">
+            <div class="track-list" id="playlistDetailTrackList"></div>
+          </section>
+        </div>
       </main>
 
       <!-- Bottom Player -->
@@ -683,7 +721,7 @@
         </button>
 
         <div class="modal-content">
-          <h1 class="modal-heading">Create Playlist</h1>
+          <h1 class="modal-heading">Edit Playlist</h1>
 
           <form class="playlist-form" id="playlistForm">
             <div class="playlist-details">
