@@ -170,6 +170,7 @@ export async function handleArtistClick(artistCard) {
         );
         currentTrackIndex = index;
         playedSongsInShuffle = [artistTrackId];
+
         localStorage.setItem(
           "playedSongsInShuffle",
           JSON.stringify([artistTrackId])

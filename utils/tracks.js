@@ -211,6 +211,8 @@ export async function playerSongHome() {
     let nextTrackId;
     if (isShuffle) {
       nextTrackId = handleTurnShuffle();
+      currentTrackIndex =
+        parseInt(localStorage.getItem("currentTrackIndex")) || 0;
     } else {
       currentTrackIndex =
         (currentTrackIndex + currentPlaylist.length + 1) %
