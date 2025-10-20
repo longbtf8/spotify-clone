@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("currentUser");
       showSigninLogin();
-      location.href = "/";
+      location.reload();
     }
   });
 });

@@ -21,10 +21,22 @@ export async function handleArtistClick(artistCard) {
   const followBtn = $(".following-btn");
   const audio = $("#audio");
   async function audioPlay() {
-    await audio.play();
+    try {
+      await audio.play();
+      const playPlayerBtn = $(".play-btn");
+      playPlayerBtn.querySelector("i").classList.add("fa-pause");
+      playPlayerBtn.querySelector("i").classList.remove("fa-play");
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        console.error("Error playing audio:", error);
+      }
+    }
+  }
+  async function audioPause() {
+    await audio.pause();
     const playPlayerBtn = $(".play-btn");
-    playPlayerBtn.querySelector("i").classList.add("fa-pause");
-    playPlayerBtn.querySelector("i").classList.remove("fa-play");
+    playPlayerBtn.querySelector("i").classList.remove("fa-pause");
+    playPlayerBtn.querySelector("i").classList.add("fa-play");
   }
   const updateFollowState = (isFollowing) => {
     if (isFollowing) {
@@ -61,7 +73,8 @@ export async function handleArtistClick(artistCard) {
 
     await checkFollowStatus();
     const artistTracks = await httpRequest.get(`artists/${id}/tracks/popular`);
-
+    const playBtnLarge = $(".play-btn-large");
+    const playBtnLargeIcon = playBtnLarge.querySelector("i");
     // click phát nhạc đầu tiên
     $(".play-btn-large").addEventListener("click", async () => {
       if (artistTracks.tracks && artistTracks.tracks.length > 0) {
@@ -83,11 +96,30 @@ export async function handleArtistClick(artistCard) {
         localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
 
         localStorage.setItem("currentSong", firstTrackId);
-
+        // if (audio.paused || audio.src !== firstTrack.audio_url) {
+        //   updatePlayer(firstTrack);
+        //   await audioPlay();
+        //   playBtnLargeIcon.classList.remove("fa-play");
+        //   playBtnLargeIcon.classList.add("fa-pause");
+        // } else {
+        //   audioPause();
+        //   playBtnLargeIcon.classList.remove("fa-pause");
+        //   playBtnLargeIcon.classList.add("fa-play");
+        // }
         updatePlayer(firstTrack);
         await audioPlay();
       }
     });
+    // audio.addEventListener("play", () => {
+    //   playBtnLargeIcon.classList.remove("fa-play");
+    //   playBtnLargeIcon.classList.add("fa-pause");
+    // });
+
+    // audio.addEventListener("pause", () => {
+    //   playBtnLargeIcon.classList.remove("fa-pause");
+    //   playBtnLargeIcon.classList.add("fa-play");
+    // });
+
     //  lấy nhạc của artist
     const artistTrack = artistTracks.tracks
       .map((artistTrack, index) => {

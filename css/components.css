@@ -461,7 +461,8 @@
   cursor: pointer;
 }
 
-.track-item:hover {
+.track-item:hover,
+.track-item.active {
   background-color: var(--bg-tertiary);
 }
 
