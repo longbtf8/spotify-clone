@@ -233,7 +233,12 @@ export async function playerSongHome() {
       JSON.parse(localStorage.getItem("currentPlaylist")) || [];
     let currentTrackIndex =
       parseInt(localStorage.getItem("currentTrackIndex")) || 0;
+
     const isShuffle = localStorage.getItem("isShuffle") === "true";
+
+    let playedSongsInShuffle = JSON.parse(
+      localStorage.getItem("playedSongsInShuffle")
+    ) || [currentPlaylist[currentTrackIndex]];
 
     if (currentPlaylist.length === 0) return;
     let prevTrackId;
@@ -251,6 +256,11 @@ export async function playerSongHome() {
         currentPlaylist.length;
       prevTrackId = currentPlaylist[currentTrackIndex];
     }
+
+    localStorage.setItem(
+      "playedSongsInShuffle",
+      JSON.stringify(playedSongsInShuffle)
+    );
 
     localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
 
@@ -362,7 +372,16 @@ export async function playerSongHome() {
     shuffleBtn.classList.toggle("active", isShuffle);
     localStorage.setItem("isShuffle", isShuffle);
     // Reset shuffle history khi bật/tắt shuffle
-    playedSongsInShuffle = [currentPlaylist[currentTrackIndex]];
+    if (isShuffle) {
+      const currentPlaylist =
+        JSON.parse(localStorage.getItem("currentPlaylist")) || [];
+      const currentTrackIndex =
+        parseInt(localStorage.getItem("currentTrackIndex")) || 0;
+      localStorage.setItem(
+        "playedSongsInShuffle",
+        JSON.stringify([currentPlaylist[currentTrackIndex]])
+      );
+    }
   });
 
   // shuffle
@@ -372,6 +391,9 @@ export async function playerSongHome() {
     let currentTrackIndex =
       parseInt(localStorage.getItem("currentTrackIndex")) || 0;
 
+    let playedSongsInShuffle = JSON.parse(
+      localStorage.getItem("playedSongsInShuffle")
+    ) || [currentPlaylist[currentTrackIndex]];
     let availableTracks = currentPlaylist.filter(
       (trackId) => !playedSongsInShuffle.includes(trackId)
     );
@@ -385,6 +407,11 @@ export async function playerSongHome() {
     const randomIndex = Math.floor(Math.random() * availableTracks.length);
     const selectedTrackId = availableTracks[randomIndex];
     playedSongsInShuffle.push(selectedTrackId);
+
+    localStorage.setItem(
+      "playedSongsInShuffle",
+      JSON.stringify(playedSongsInShuffle)
+    );
 
     currentTrackIndex = currentPlaylist.indexOf(selectedTrackId);
     localStorage.setItem("currentTrackIndex", String(currentTrackIndex));

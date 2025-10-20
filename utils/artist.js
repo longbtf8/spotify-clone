@@ -73,6 +73,13 @@ export async function handleArtistClick(artistCard) {
 
     await checkFollowStatus();
     const artistTracks = await httpRequest.get(`artists/${id}/tracks/popular`);
+    const firstTrackId = artistTracks.tracks[0]?.id;
+    if (firstTrackId) {
+      localStorage.setItem(
+        "playedSongsInShuffle",
+        JSON.stringify([firstTrackId])
+      );
+    }
     const playBtnLarge = $(".play-btn-large");
     const playBtnLargeIcon = playBtnLarge.querySelector("i");
     // click phát nhạc đầu tiên
@@ -88,6 +95,10 @@ export async function handleArtistClick(artistCard) {
         playedSongsInShuffle = [firstTrackId];
 
         //luu vao local
+        localStorage.setItem(
+          "playedSongsInShuffle",
+          JSON.stringify([firstTrackId])
+        );
         localStorage.setItem("currentContext", currentContext);
         localStorage.setItem(
           "currentPlaylist",
@@ -159,6 +170,10 @@ export async function handleArtistClick(artistCard) {
         );
         currentTrackIndex = index;
         playedSongsInShuffle = [artistTrackId];
+        localStorage.setItem(
+          "playedSongsInShuffle",
+          JSON.stringify([artistTrackId])
+        );
 
         // Lưu vào localStorage
         localStorage.setItem("currentContext", currentContext);

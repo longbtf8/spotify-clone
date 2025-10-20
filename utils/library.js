@@ -97,7 +97,7 @@ export async function loadAndDisplayPlaylists() {
       });
     });
   } catch (error) {
-    alert("Không thể tải playlist. Bạn có thể chưa đăng nhập.", error);
+    // alert("Không thể tải playlist. Bạn có thể chưa đăng nhập.", error);
     libraryContent.innerHTML = `
       <div class="library-item active">
         <div class="item-icon liked-songs">
