@@ -97,7 +97,6 @@ export async function loadAndDisplayPlaylists() {
       });
     });
   } catch (error) {
-    // alert("Không thể tải playlist. Bạn có thể chưa đăng nhập.", error);
     libraryContent.innerHTML = `
       <div class="library-item active">
         <div class="item-icon liked-songs">
@@ -114,7 +113,6 @@ export async function loadAndDisplayPlaylists() {
   }
 }
 
-//  set up hiển thị playlist artist hoặc playlist
 export function setupLibraryTabs() {
   const artistBtn = $(".artistBtn");
   const playListBtn = $(".playListBtn");
@@ -163,13 +161,12 @@ export function setupLibraryTabs() {
   });
   playListBtn.addEventListener("click", loadAndDisplayPlaylists);
 
-  // Mặc định tải danh sách playlist khi khởi động
   loadAndDisplayPlaylists();
 }
+
 function showContextMenu(e, { artistId, playlistId }) {
   contextMenu.style.top = `${e.clientY}px`;
   contextMenu.style.left = `${e.clientX}px`;
-  // Reset
   contextMenu.removeAttribute("data-artist-id");
   contextMenu.removeAttribute("data-playlist-id");
   unfollowArtistBtn.style.display = "none";
@@ -185,4 +182,139 @@ function showContextMenu(e, { artistId, playlistId }) {
   }
 
   contextMenu.classList.add("show");
+}
+
+// ===== SORT MENU FUNCTIONALITY =====
+export function initSortMenu() {
+  const sortBtn = $("#openSortMenu");
+  const sortMenu = $("#sortMenu");
+
+  if (!sortBtn || !sortMenu) {
+    console.error("Sort menu elements not found!");
+    return;
+  }
+
+  const menuItems = $$(".menu-item[data-sort]");
+  const viewButtons = $$(".view-btn[data-view]");
+  const libraryContent = $(".library-content");
+  const sortBtnText = sortBtn.childNodes[0];
+
+  let currentSort = "recents";
+  let currentView = "grid-dense";
+
+  console.log("Sort menu initialized"); // Debug
+
+  // Toggle menu
+  sortBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const isOpen = sortMenu.classList.contains("show");
+
+    if (isOpen) {
+      sortMenu.classList.remove("show");
+      sortBtn.setAttribute("aria-expanded", "false");
+    } else {
+      sortMenu.classList.add("show");
+      sortBtn.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!sortBtn.contains(e.target) && !sortMenu.contains(e.target)) {
+      sortMenu.classList.remove("show");
+      sortBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  // Close menu with Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && sortMenu.classList.contains("show")) {
+      sortMenu.classList.remove("show");
+      sortBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  // Handle sort options
+  menuItems.forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const sortType = item.dataset.sort;
+
+      // Update UI
+      menuItems.forEach((i) => {
+        i.classList.remove("is-active");
+        i.setAttribute("aria-checked", "false");
+      });
+
+      item.classList.add("is-active");
+      item.setAttribute("aria-checked", "true");
+
+      // Update button text
+      const sortText = item.querySelector("span").textContent;
+      sortBtnText.textContent = sortText + " ";
+
+      currentSort = sortType;
+      sortLibrary(sortType);
+    });
+  });
+
+  // Handle view options
+  viewButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const viewType = btn.dataset.view;
+
+      // Update UI
+      viewButtons.forEach((b) => b.classList.remove("is-current"));
+      btn.classList.add("is-current");
+
+      currentView = viewType;
+      applyView(viewType);
+    });
+  });
+
+  // Sort library function
+  function sortLibrary(sortType) {
+    const items = Array.from(libraryContent.querySelectorAll(".library-item"));
+
+    items.sort((a, b) => {
+      const titleA =
+        a.querySelector(".item-title")?.textContent.toLowerCase() || "";
+      const titleB =
+        b.querySelector(".item-title")?.textContent.toLowerCase() || "";
+      const subtitleA =
+        a.querySelector(".item-subtitle")?.textContent.toLowerCase() || "";
+      const subtitleB =
+        b.querySelector(".item-subtitle")?.textContent.toLowerCase() || "";
+
+      switch (sortType) {
+        case "alphabetical":
+          return titleA.localeCompare(titleB);
+
+        case "creator":
+          return subtitleA.localeCompare(subtitleB);
+
+        case "recently-added":
+        case "recents":
+        default:
+          return 0;
+      }
+    });
+
+    libraryContent.innerHTML = "";
+    items.forEach((item) => libraryContent.appendChild(item));
+  }
+
+  // Apply view function
+  function applyView(viewType) {
+    libraryContent.classList.remove(
+      "view--list",
+      "view--list-compact",
+      "view--grid",
+      "view--grid-dense"
+    );
+    libraryContent.classList.add(`view--${viewType}`);
+  }
 }

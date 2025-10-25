@@ -4,8 +4,9 @@ import {
   showPopularArtists,
   playerSongHome,
 } from "./utils/tracks.js";
-import { setupLibraryTabs } from "./utils/library.js";
+import { setupLibraryTabs, initSortMenu } from "./utils/library.js";
 import { initPlayListManager } from "./utils/playlist.js";
+
 // Auth Modal Functionality
 document.addEventListener("DOMContentLoaded", function () {
   // Get DOM elements
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const showLoginBtn = document.getElementById("showLogin");
   const showSignupBtn = document.getElementById("showSignup");
   const formSignUpLog = document.querySelectorAll(".auth-form-content");
+
   // Function to show signup form
   function showSignupForm() {
     signupForm.style.display = "block";
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to open modal
   function openModal() {
     authModal.classList.add("show");
-    document.body.style.overflow = "hidden"; // Prevent background scrolling
+    document.body.style.overflow = "hidden";
   }
 
   // Open modal with Sign Up form when clicking Sign Up button
@@ -41,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showSignupForm();
     openModal();
   });
+
   formSignUpLog.forEach((form) => {
     form.addEventListener("focusin", (e) => {
       const formField = e.target.closest(".form-group");
@@ -103,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     });
+
   // Open modal with Login form when clicking Login button
   loginBtn.addEventListener("click", function () {
     showLoginForm();
@@ -112,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Close modal function
   function closeModal() {
     authModal.classList.remove("show");
-    document.body.style.overflow = "auto"; // Restore scrolling
+    document.body.style.overflow = "auto";
   }
 
   // Close modal when clicking close button
@@ -141,6 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
   showSignupBtn.addEventListener("click", function () {
     showSignupForm();
   });
+
   //Login
   loginForm
     .querySelector(".auth-form-content")
@@ -215,12 +220,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Handle logout button click
   logoutBtn.addEventListener("click", async () => {
-    // Close dropdown first
     userDropdown.classList.remove("show");
     const token = localStorage.getItem("accessToken");
 
     console.log("Logout clicked");
-    // TODO: Students will implement logout logic here
     try {
       if (token) {
         await httpRequest.post("auth/logout", { refresh_token: token });
@@ -251,6 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     authButtons.classList.add("show");
   }
 });
+
 function updateCurrentUser(user) {
   const userName = document.querySelector(".user-name");
   const userAvatar = document.querySelector("#user-avatar");
@@ -261,26 +265,26 @@ function updateCurrentUser(user) {
     userName.textContent = user.email;
   }
 }
+
 function showUserMenu() {
   const userInfo = document.querySelector(".user-menu");
   const authButtons = document.querySelector(".auth-buttons");
   userInfo.classList.add("show");
-
   authButtons.classList.remove("show");
 }
+
 function showSigninLogin() {
   const userInfo = document.querySelector(".user-menu");
   const authButtons = document.querySelector(".auth-buttons");
   userInfo.classList.remove("show");
-
   authButtons.classList.add("show");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Lấy dữ liệu cho home
   showTodayBiggestHit();
   showPopularArtists();
   playerSongHome();
   setupLibraryTabs();
+  initSortMenu();
   initPlayListManager();
 });

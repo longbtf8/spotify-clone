@@ -1593,3 +1593,168 @@
     font-size: 16px;
   }
 }
+
+/* ===== VIEW MODES: LIST COMPACT ===== */
+.sidebar .library-content.view--list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar .library-content.view--list-compact .library-item {
+  padding: 6px 8px;
+  border-radius: 6px;
+  gap: 12px;
+}
+
+.sidebar .library-content.view--list-compact .item-image,
+.sidebar .library-content.view--list-compact .item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+
+.sidebar .library-content.view--list-compact .item-title {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.sidebar .library-content.view--list-compact .item-subtitle {
+  font-size: 12px;
+}
+
+.sidebar .library-content.view--list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar .library-content.view--list .library-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.sidebar .library-content.view--list .item-image,
+.sidebar .library-content.view--list .item-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+}
+
+.sidebar .library-content.view--list .item-title {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.sidebar .library-content.view--list .item-subtitle {
+  font-size: 14px;
+}
+
+/* ===== VIEW MODES: GRID ===== */
+.sidebar .library-content.view--grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 8px 8px;
+}
+
+.sidebar .library-content.view--grid .library-item {
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.sidebar .library-content.view--grid .item-image,
+.sidebar .library-content.view--grid .item-icon {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.sidebar .library-content.view--grid .item-info {
+  width: 100%;
+}
+
+.sidebar .library-content.view--grid .item-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.sidebar .library-content.view--grid .item-subtitle {
+  font-size: 12px;
+  text-align: left;
+}
+
+/* ===== VIEW MODES: GRID DENSE (mặc định) ===== */
+.sidebar .library-content.view--grid-dense,
+.sidebar .library-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar .library-content.view--grid-dense .library-item {
+  display: flex;
+  flex-direction: row;
+  padding: 8px;
+  border-radius: 6px;
+  gap: 12px;
+}
+
+.sidebar .library-content.view--grid-dense .item-image,
+.sidebar .library-content.view--grid-dense .item-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+}
+
+.sidebar .library-content.view--grid-dense .item-title {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.sidebar .library-content.view--grid-dense .item-subtitle {
+  font-size: 12px;
+}
+
+/* Animation cho menu */
+.sort-menu {
+  transform-origin: top right;
+}
+
+.sort-menu.show {
+  animation: menuFadeIn 0.15s ease-out;
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hover states cho menu items */
+.menu-item {
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0 4px;
+}
+
+.view-btn {
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Responsive cho grid views */
+@media (max-width: 1023px) {
+  .sidebar .library-content.view--grid {
+    grid-template-columns: 1fr;
+  }
+}
