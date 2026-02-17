@@ -1,5 +1,5 @@
-import httpRequest from "./httpRequest.js";
-import { $, $$ } from "./commonPage.js";
+import httpRequest from "../service/httpRequest.js";
+import { $, $$ } from "../utils/commonPage.js";
 import { loadAndDisplayPlaylists } from "./library.js";
 
 const createBtn = $(".create-btn");
@@ -29,7 +29,7 @@ export function initPlayListManager() {
         formData.append("cover", selectedCoverFile);
         await httpRequest.post(
           `upload/playlist/${currentEditingPlaylistId}/cover`,
-          formData
+          formData,
         );
       }
       //  Cập nhật tên và mô tả

@@ -1,5 +1,5 @@
-import httpRequest from "./httpRequest.js";
-import { toMMSS, updatePlayer } from "./commonPage.js";
+import httpRequest from "../service/httpRequest.js";
+import { toMMSS, updatePlayer } from "../utils/commonPage.js";
 
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
@@ -77,7 +77,7 @@ export async function handleArtistClick(artistCard) {
     if (firstTrackId) {
       localStorage.setItem(
         "playedSongsInShuffle",
-        JSON.stringify([firstTrackId])
+        JSON.stringify([firstTrackId]),
       );
     }
     const playBtnLarge = $(".play-btn-large");
@@ -97,12 +97,12 @@ export async function handleArtistClick(artistCard) {
         //luu vao local
         localStorage.setItem(
           "playedSongsInShuffle",
-          JSON.stringify([firstTrackId])
+          JSON.stringify([firstTrackId]),
         );
         localStorage.setItem("currentContext", currentContext);
         localStorage.setItem(
           "currentPlaylist",
-          JSON.stringify(currentPlaylist)
+          JSON.stringify(currentPlaylist),
         );
         localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
 
@@ -166,21 +166,21 @@ export async function handleArtistClick(artistCard) {
         // Cập nhật context và playlist cho artist
         currentContext = "artist";
         currentPlaylist = Array.from(trackItems).map(
-          (item) => item.dataset.artistTrackId
+          (item) => item.dataset.artistTrackId,
         );
         currentTrackIndex = index;
         playedSongsInShuffle = [artistTrackId];
 
         localStorage.setItem(
           "playedSongsInShuffle",
-          JSON.stringify([artistTrackId])
+          JSON.stringify([artistTrackId]),
         );
 
         // Lưu vào localStorage
         localStorage.setItem("currentContext", currentContext);
         localStorage.setItem(
           "currentPlaylist",
-          JSON.stringify(currentPlaylist)
+          JSON.stringify(currentPlaylist),
         );
         localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
 
@@ -189,7 +189,7 @@ export async function handleArtistClick(artistCard) {
         // Cập nhật context và playlist cho artist
         currentContext = "artist";
         currentPlaylist = Array.from(trackItems).map(
-          (item) => item.dataset.artistTrackId
+          (item) => item.dataset.artistTrackId,
         );
         currentTrackIndex = index;
 

@@ -1,4 +1,4 @@
-import httpRequest from "./httpRequest.js";
+import httpRequest from "../service/httpRequest.js";
 import { handleArtistClick } from "./artist.js";
 import { handlePlaylistClick } from "./playlist.js";
 const $ = document.querySelector.bind(document);
@@ -72,7 +72,7 @@ export async function loadAndDisplayPlaylists() {
           <div class="item-title">${playlist.name}</div>
           <div class="item-subtitle">Playlist • ${playlist.user_name}</div>
         </div>
-      </div>`
+      </div>`,
         )
         .join("");
     }
@@ -81,7 +81,7 @@ export async function loadAndDisplayPlaylists() {
       item.addEventListener("click", () => {
         const playlistId = item.dataset.playlistId;
         const currentActiveItem = libraryContent.querySelector(
-          ".library-item.active"
+          ".library-item.active",
         );
         if (currentActiveItem) {
           currentActiveItem.classList.remove("active");
@@ -143,7 +143,7 @@ export function setupLibraryTabs() {
         libraryItems.forEach((item) => {
           item.addEventListener("click", () => {
             const currentActiveItem = libraryContent.querySelector(
-              ".library-item.active"
+              ".library-item.active",
             );
             if (currentActiveItem) {
               currentActiveItem.classList.remove("active");
@@ -201,8 +201,6 @@ export function initSortMenu() {
 
   let currentSort = "recents";
   let currentView = "grid-dense";
-
-  console.log("Sort menu initialized"); // Debug
 
   // Toggle menu
   sortBtn.addEventListener("click", (e) => {
@@ -313,7 +311,7 @@ export function initSortMenu() {
       "view--list",
       "view--list-compact",
       "view--grid",
-      "view--grid-dense"
+      "view--grid-dense",
     );
     libraryContent.classList.add(`view--${viewType}`);
   }

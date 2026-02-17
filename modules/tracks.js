@@ -1,5 +1,5 @@
-import httpRequest from "./httpRequest.js";
-import { $, $$, toMMSS, updatePlayer } from "./commonPage.js";
+import httpRequest from "../service/httpRequest.js";
+import { $, $$, toMMSS, updatePlayer } from "../utils/commonPage.js";
 import { handleArtistClick } from "./artist.js";
 
 let currentContext = localStorage.getItem("currentContext") || "home";
@@ -78,7 +78,7 @@ export async function playerSongHome() {
       // cập nhật context và playlist
       currentContext = "home";
       currentPlaylist = Array.from(hitsCards).map(
-        (card) => card.dataset.trackId
+        (card) => card.dataset.trackId,
       );
       currentTrackIndex = index;
       // lấy id hiện tại
@@ -239,7 +239,7 @@ export async function playerSongHome() {
     const isShuffle = localStorage.getItem("isShuffle") === "true";
 
     let playedSongsInShuffle = JSON.parse(
-      localStorage.getItem("playedSongsInShuffle")
+      localStorage.getItem("playedSongsInShuffle"),
     ) || [currentPlaylist[currentTrackIndex]];
 
     if (currentPlaylist.length === 0) return;
@@ -261,7 +261,7 @@ export async function playerSongHome() {
 
     localStorage.setItem(
       "playedSongsInShuffle",
-      JSON.stringify(playedSongsInShuffle)
+      JSON.stringify(playedSongsInShuffle),
     );
 
     localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
@@ -298,11 +298,11 @@ export async function playerSongHome() {
     const rect = progressBar.getBoundingClientRect();
     const percent = Math.max(
       0,
-      Math.min(100, ((clientX - rect.left) / rect.width) * 100)
+      Math.min(100, ((clientX - rect.left) / rect.width) * 100),
     );
     document.documentElement.style.setProperty(
       "--progressWidth",
-      `${percent}%`
+      `${percent}%`,
     );
     const newTime = (percent * audio.duration) / 100;
     currentTimeEl.textContent = toMMSS(newTime);
@@ -381,7 +381,7 @@ export async function playerSongHome() {
         parseInt(localStorage.getItem("currentTrackIndex")) || 0;
       localStorage.setItem(
         "playedSongsInShuffle",
-        JSON.stringify([currentPlaylist[currentTrackIndex]])
+        JSON.stringify([currentPlaylist[currentTrackIndex]]),
       );
     }
   });
@@ -394,16 +394,16 @@ export async function playerSongHome() {
       parseInt(localStorage.getItem("currentTrackIndex")) || 0;
 
     let playedSongsInShuffle = JSON.parse(
-      localStorage.getItem("playedSongsInShuffle")
+      localStorage.getItem("playedSongsInShuffle"),
     ) || [currentPlaylist[currentTrackIndex]];
     let availableTracks = currentPlaylist.filter(
-      (trackId) => !playedSongsInShuffle.includes(trackId)
+      (trackId) => !playedSongsInShuffle.includes(trackId),
     );
     if (availableTracks.length === 0) {
       // Đặt lại lịch sử nhưng giữ lại bài hiện tại để không bị lặp lại ngay
       playedSongsInShuffle = [currentPlaylist[currentTrackIndex]];
       availableTracks = currentPlaylist.filter(
-        (trackId) => !playedSongsInShuffle.includes(trackId)
+        (trackId) => !playedSongsInShuffle.includes(trackId),
       );
     }
     const randomIndex = Math.floor(Math.random() * availableTracks.length);
@@ -412,7 +412,7 @@ export async function playerSongHome() {
 
     localStorage.setItem(
       "playedSongsInShuffle",
-      JSON.stringify(playedSongsInShuffle)
+      JSON.stringify(playedSongsInShuffle),
     );
 
     currentTrackIndex = currentPlaylist.indexOf(selectedTrackId);
@@ -434,7 +434,7 @@ export async function playerSongHome() {
       const percent = (audio.currentTime / audio.duration) * 100;
       document.documentElement.style.setProperty(
         "--progressWidth",
-        `${percent}%`
+        `${percent}%`,
       );
       currentTimeEl.textContent = toMMSS(audio.currentTime);
     }
@@ -456,13 +456,13 @@ export async function playerSongHome() {
     const rect = volumeBar.getBoundingClientRect();
     const percent = Math.max(
       0,
-      Math.min(((clientX - rect.left) / rect.width) * 100, 100)
+      Math.min(((clientX - rect.left) / rect.width) * 100, 100),
     );
     const volume = percent / 100;
     audio.volume = volume;
     document.documentElement.style.setProperty(
       "--progressVolume",
-      `${percent}%`
+      `${percent}%`,
     );
     localStorage.setItem("playerVolume", volume);
     return percent;
@@ -497,7 +497,7 @@ export async function playerSongHome() {
       const percentVolume = lastVolume * 100;
       document.documentElement.style.setProperty(
         "--progressVolume",
-        `${percentVolume}%`
+        `${percentVolume}%`,
       );
     }
   });
@@ -555,7 +555,7 @@ export async function playerSongHome() {
     audio.volume = parseFloat(volumeAudio);
     document.documentElement.style.setProperty(
       "--progressVolume",
-      `${volumeAudio * 100}%`
+      `${volumeAudio * 100}%`,
     );
     const volumePercent = volumeAudio * 100;
     checkVolume(volumePercent);
