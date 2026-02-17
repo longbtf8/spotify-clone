@@ -58,6 +58,24 @@ async function checkLoginStatus() {
     authButtons.classList.add("show");
   }
 }
+function toggleSeenPassword() {
+  const password = document
+    .querySelectorAll(".toggle-password")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const input = document.getElementById(btn.dataset.target);
+        const icon = btn.querySelector("i");
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList = " fas fa-eye-slash";
+        } else {
+          input.type = "password";
+          icon.classList = " fas fa-eye";
+        }
+      }),
+    );
+  console.log(password);
+}
 
 export function initAuth() {
   // Get DOM elements
@@ -132,6 +150,43 @@ export function initAuth() {
         const email = signupForm.querySelector("#signupEmail").value.trim();
         const password = signupForm.querySelector("#signupPassword").value;
 
+        let isValid = true;
+        const emailGroup = signupForm
+          .querySelector("#signupEmail")
+          .closest(".form-group");
+        const passwordGroup = signupForm
+          .querySelector("#signupPassword")
+          .closest(".form-group");
+
+        if (!email) {
+          emailGroup.classList.add("invalid");
+          emailGroup.querySelector(".error-message span").textContent =
+            "Please enter your email address.";
+          isValid = false;
+        } else if (
+          !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+        ) {
+          emailGroup.classList.add("invalid");
+          emailGroup.querySelector(".error-message span").textContent =
+            "Please enter your email address in the correct format.";
+          isValid = false;
+        }
+        if (!password) {
+          passwordGroup.classList.add("invalid");
+          passwordGroup.querySelector(".error-message span").textContent =
+            "Please enter the password.";
+          isValid = false;
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(password)) {
+          passwordGroup.classList.add("invalid");
+          passwordGroup.querySelector(".error-message span").textContent =
+            "Passwords must contain at least one uppercase letter, one lowercase letter, and one number.";
+          isValid = false;
+        }
+
+        if (!isValid) {
+          return;
+        }
+
         try {
           const { user, access_token } = await httpRequest.post(
             "auth/register",
@@ -149,24 +204,26 @@ export function initAuth() {
             updateCurrentUser(me);
           } catch (_) {}
         } catch (error) {
+          console.log(error);
           // Xử lý lỗi đăng ký
           if (error?.response?.error?.code === "EMAIL_EXISTS") {
             const emailGroup = e.target.querySelector(".form-group");
             emailGroup.classList.add("invalid");
             emailGroup.querySelector(".error-message span").textContent =
-              error.response.error.message;
+              `The email already exists.`;
           }
           if (error?.response?.error?.details?.[0]?.field === "email") {
             const emailGroup = e.target.querySelector(".form-group");
             emailGroup.classList.add("invalid");
             emailGroup.querySelector(".error-message span").textContent =
-              error.response.error.details[0].message;
+              "Please enter your email address in the correct format.";
           }
+
           if (error?.response?.error?.details?.[0]?.field === "password") {
             const pwdGroup = e.target.querySelector(".form-group:nth-child(2)");
             pwdGroup.classList.add("invalid");
             pwdGroup.querySelector(".error-message span").textContent =
-              error.response.error.details[0].message;
+              `Passwords must contain at least one uppercase letter, one lowercase letter, and one number.`;
           }
         }
       });
@@ -180,7 +237,31 @@ export function initAuth() {
         e.preventDefault();
         const email = loginForm.querySelector("#loginEmail").value.trim();
         const password = loginForm.querySelector("#loginPassword").value;
+        const emailGroup = loginForm
+          .querySelector("#loginEmail")
+          .closest(".form-group");
+        const pwdGroup = loginForm
+          .querySelector("#loginPassword")
+          .closest(".form-group");
+        // reset lỗi
+        emailGroup.classList.remove("invalid");
+        pwdGroup.classList.remove("invalid");
 
+        let isValid = true;
+        if (!email) {
+          emailGroup.classList.add("invalid");
+          emailGroup.querySelector(".error-message").textContent =
+            "Please enter your email address.";
+          isValid = false;
+        }
+        if (!password) {
+          pwdGroup.classList.add("invalid");
+          pwdGroup.querySelector(".error-message").textContent =
+            "Please enter the password.";
+          isValid = false;
+        }
+
+        if (!isValid) return;
         try {
           const { user, access_token } = await httpRequest.post("auth/login", {
             email,
@@ -198,7 +279,7 @@ export function initAuth() {
             const emailGroup = e.target.querySelector(".form-group");
             emailGroup.classList.add("invalid");
             emailGroup.querySelector(".error-message").textContent =
-              error?.response?.error?.details[0].message;
+              "Please check your email again.";
           }
           if (error?.response?.error?.code == "INVALID_CREDENTIALS") {
             const pwdGroup = e.target.querySelector(".form-group:nth-child(2)");
@@ -210,6 +291,7 @@ export function initAuth() {
       });
   }
 
+  toggleSeenPassword();
   // Xử lý User Menu & Logout
   if (userAvatarBtn) {
     userAvatarBtn.addEventListener("click", (e) => {

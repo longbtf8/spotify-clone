@@ -1145,7 +1145,9 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
   z-index: 1000;
 }
 [data-tooltip]:hover::after,
@@ -1212,7 +1214,9 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px);
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
   z-index: var(--z-tooltip);
   font-size: 14px;
 }
@@ -1244,7 +1248,9 @@
   justify-content: space-between;
   align-items: center;
   background: transparent;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
 }
 .menu-item:hover {
   background-color: #3e3e3e;
@@ -1282,7 +1288,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.12s ease, color 0.12s ease, transform 0.1s;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    transform 0.1s;
 }
 .view-btn:hover {
   background-color: #3e3e3e;
@@ -1757,4 +1766,39 @@
   .sidebar .library-content.view--grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* css auth password */
+.password-group {
+  position: relative;
+}
+
+.password-group .form-input {
+  padding-right: 44px; /* chừa chỗ cho icon */
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a7a7a7;
+  font-size: 16px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: #fff;
+}
+
+/* Đẩy icon xuống nếu có error message hiện */
+.password-group .error-message ~ .toggle-password,
+.password-group.has-error .toggle-password {
+  top: calc(50% - 10px); /* điều chỉnh nếu cần */
 }
