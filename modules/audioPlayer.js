@@ -9,6 +9,7 @@ const state = {
   shuffleHistory: [],
   isRepeat: false,
   isShuffle: false,
+  artistId: null,
 };
 
 function getLocalStorage() {
@@ -55,6 +56,7 @@ const volumeIcon = $(".volumeAudio i");
 function setPlayIcon(isPlaying) {
   playBtn.querySelector("i").classList.toggle("fa-pause", isPlaying);
   playBtn.querySelector("i").classList.toggle("fa-play", !isPlaying);
+  syncPlayButtons(isPlaying);
 }
 
 export function renderTrackInfo(track) {
@@ -100,11 +102,18 @@ async function loadAndPlay(trackId) {
  * @param {[]} trackIds
  * @param {number}   startIndex
  */
-export async function setContext(context, trackIds, startIndex = 0) {
+export async function setContext(
+  context,
+  trackIds,
+  startIndex = 0,
+  artistId = null,
+) {
   state.context = context;
   state.playlist = trackIds;
   state.index = startIndex;
   state.shuffleHistory = [trackIds[startIndex]];
+  state.artistId = artistId;
+
   setLocalStorage();
   await loadAndPlay(trackIds[startIndex]); // fix bug cũ: truyền đúng id, không phải cả mảng
 }
@@ -389,4 +398,38 @@ export async function initPlayer() {
       console.warn("Không thể restore bài hát:", e);
     }
   }
+}
+export function syncPlayButtons(isPlaying) {
+  const trackId = state.playlist[state.index] ?? null;
+
+  // Hit cards
+  document.querySelectorAll(".hit-card").forEach((card) => {
+    const i = card.querySelector(".hit-play-btn i");
+    if (!i) return;
+    const active = card.dataset.trackId === trackId && isPlaying;
+    i.classList.toggle("fa-pause", active);
+    i.classList.toggle("fa-play", !active);
+  });
+
+  // play-btn-large (artist/playlist)
+  const largeBtn = document.querySelector(".play-btn-large");
+  if (largeBtn) {
+    const artistCard = document.querySelector("[data-artist-id]");
+    console.log(artistCard.dataset.artistId);
+    console.log(state.artistId);
+    const i = largeBtn.querySelector("i");
+    const isActive =
+      state.artistId === artistCard.dataset.artistId &&
+      state.context === "artist" &&
+      isPlaying;
+    i.classList.toggle("fa-pause", isActive);
+    i.classList.toggle("fa-play", !isActive);
+  }
+  document.querySelectorAll(".artist-card").forEach((card) => {
+    const i = card.querySelector(".artist-play-btn i");
+    if (!i) return;
+    const active = card.dataset.artistId === state.artistId && isPlaying;
+    i.classList.toggle("fa-pause", active);
+    i.classList.toggle("fa-play", !active);
+  });
 }

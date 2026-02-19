@@ -90,7 +90,7 @@ export async function handleArtistClick(artistCard) {
     // Click nút Play lớn → phát bài đầu tiên
     $(".play-btn-large").addEventListener("click", () => {
       if (trackIds.length > 0) {
-        setContext("artist", trackIds, 0);
+        setContext("artist", trackIds, 0, id);
       }
     });
 
@@ -118,7 +118,7 @@ export async function handleArtistClick(artistCard) {
     // Click từng track  phát đúng bài đó
     $$(".track-item").forEach((trackItem, index) => {
       trackItem.addEventListener("click", () => {
-        setContext("artist", trackIds, index);
+        setContext("artist", trackIds, index, id);
       });
     });
   } catch (error) {
