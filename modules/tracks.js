@@ -1,7 +1,7 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$, toMMSS } from "../utils/commonPage.js";
 import { handleArtistClick } from "./artist.js";
-import { setContext } from "./player.js"; // ← thêm dòng này
+import { setContext } from "./audioPlayer.js";
 
 // UI showTodayBiggestHit
 export async function showTodayBiggestHit() {

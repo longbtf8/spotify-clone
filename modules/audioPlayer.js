@@ -1,5 +1,5 @@
-import httpRequest from "../service/httpRequest";
-import { $, toMMSS } from "../utils/commonPage";
+import httpRequest from "../service/httpRequest.js";
+import { $, toMMSS } from "../utils/commonPage.js";
 
 //  STATE
 const state = {
