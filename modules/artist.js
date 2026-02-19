@@ -107,16 +107,7 @@ export async function handleArtistClick(artistCard) {
         localStorage.setItem("currentTrackIndex", String(currentTrackIndex));
 
         localStorage.setItem("currentSong", firstTrackId);
-        // if (audio.paused || audio.src !== firstTrack.audio_url) {
-        //   updatePlayer(firstTrack);
-        //   await audioPlay();
-        //   playBtnLargeIcon.classList.remove("fa-play");
-        //   playBtnLargeIcon.classList.add("fa-pause");
-        // } else {
-        //   audioPause();
-        //   playBtnLargeIcon.classList.remove("fa-pause");
-        //   playBtnLargeIcon.classList.add("fa-play");
-        // }
+
         updatePlayer(firstTrack);
         await audioPlay();
       }
