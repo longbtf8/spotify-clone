@@ -67,11 +67,10 @@ export async function showPopularArtists() {
 export async function playerSongHome() {
   const hitsCards = await showTodayBiggestHit();
 
-  // ── hit cards: thay ~20 dòng localStorage + fetch bằng setContext ──
   hitsCards.forEach((hitsCard, index) => {
     hitsCard.addEventListener("click", () => {
       const ids = Array.from(hitsCards).map((c) => c.dataset.trackId);
-      setContext("home", ids, index); // ← thay toàn bộ khối cũ
+      setContext("home", ids, index);
     });
   });
 
@@ -81,40 +80,6 @@ export async function playerSongHome() {
     artistCard.addEventListener("click", () => {
       handleArtistClick(artistCard);
     });
-  });
-
-  // click follow
-  const followBtn = $(".following-btn");
-  followBtn.addEventListener("click", async () => {
-    const artistId = followBtn.dataset.artistId;
-    const isFollowing = followBtn.classList.contains("active");
-    try {
-      if (!isFollowing) {
-        await httpRequest.post(`artists/${artistId}/follow`);
-        followBtn.textContent = "Following";
-        followBtn.classList.add("active");
-      } else {
-        await httpRequest.del(`artists/${artistId}/follow`);
-        followBtn.textContent = "Follow";
-        followBtn.classList.remove("active");
-      }
-    } catch (error) {
-      if (error?.response?.error?.code === "ALREADY_FOLLOWING") {
-        alert(error?.response?.error?.message);
-      }
-      if (error?.response?.error?.code === "NOT_FOLLOWING") {
-        alert("Not following this artist");
-      }
-      if (error?.response?.error?.code === "AUTH_HEADER_MISSING") {
-        alert("Vui lòng đăng nhập để được follow");
-      }
-      if (error?.response?.error?.code === "ARTIST_NOT_FOUND") {
-        alert("ARTIST_NOT_FOUND");
-      }
-      if (error?.response?.error?.code === "TOKEN_EXPIRED") {
-        alert("Vui lòng đăng nhập lại");
-      }
-    }
   });
 
   const contentWrapper = $(".content-wrapper");
@@ -143,7 +108,6 @@ export async function playerSongHome() {
   if (currentSong) {
     try {
       const track = await httpRequest.get(`tracks/${currentSong}`);
-      // renderTrackInfo đã được initPlayer() lo, không cần làm lại ở đây
     } catch (error) {
       console.log(error);
     }
