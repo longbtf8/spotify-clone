@@ -39,18 +39,19 @@ export async function showTodayBiggestHit() {
 export async function showPopularArtists() {
   const artistsGrid = $(".artists-grid");
   try {
-    const data = await httpRequest.get("artists/trending?limit=20");
-    const artists = data.artists
+    const data = await httpRequest.get("albums/popular?limit=20");
+    console.log(data);
+    const artists = data.albums
       .map((artist) => {
-        return `<div class="artist-card" data-artist-id="${artist.id}">
+        return `<div class="artist-card" data-artist-id="${artist.artist_id}">
                 <div class="artist-card-cover">
-                  <img src="${artist.image_url}" alt="${artist.name}" />
+                  <img src="${artist.artist_image_url}" alt="${artist.artist_name}" />
                   <button class="artist-play-btn">
                     <i class="fas fa-play"></i>
                   </button>
                 </div>
                 <div class="artist-card-info">
-                  <h3 class="artist-card-name">${artist.name}</h3>
+                  <h3 class="artist-card-name">${artist.artist_name}</h3>
                   <p class="artist-card-type">Artist</p>
                 </div>
               </div>`;
