@@ -85,6 +85,7 @@ export function pause() {
 export function togglePlay() {
   audio.paused ? play() : pause();
 }
+export const getState = () => state;
 
 async function loadAndPlay(trackId) {
   try {
@@ -419,8 +420,6 @@ export function syncPlayButtons(isPlaying) {
   if (largeBtn) {
     // Lấy id artist đang hiển thị từ following-btn
     const artistCard = document.querySelector(".following-btn");
-    console.log(artistCard.dataset.artistId);
-    console.log(state.artistId);
     const i = largeBtn.querySelector("i");
     const isActive =
       state.artistId === artistCard.dataset.artistId &&

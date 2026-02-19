@@ -57,7 +57,6 @@ async function checkLoginStatus() {
 
   try {
     const { user } = await httpRequest.get("users/me");
-    console.log(user);
     updateCurrentUser(user);
     userInfo.classList.add("show");
   } catch (error) {
@@ -80,7 +79,6 @@ function toggleSeenPassword() {
         }
       }),
     );
-  console.log(password);
 }
 
 export function initAuth() {

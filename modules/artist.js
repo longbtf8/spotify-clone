@@ -1,6 +1,11 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$, toMMSS } from "../utils/commonPage.js";
-import { isPlaying, setContext, syncPlayButtons } from "./audioPlayer.js";
+import {
+  isPlaying,
+  setContext,
+  syncPlayButtons,
+  togglePlay,
+} from "./audioPlayer.js";
 
 export async function handleArtistClick(artistCard) {
   const id = artistCard.dataset.artistId;
@@ -88,9 +93,19 @@ export async function handleArtistClick(artistCard) {
     const artistTracks = await httpRequest.get(`artists/${id}/tracks/popular`);
     const trackIds = artistTracks?.tracks.map((t) => t.id);
 
-    // Click nút Play lớn → phát bài đầu tiên
+    // Click nút Play lớn phát bài đầu tiên
     $(".play-btn-large").addEventListener("click", () => {
-      if (trackIds.length > 0) {
+      if (!trackIds.length) return;
+      const savedIds = JSON.parse(
+        localStorage.getItem("currentPlaylist") || "[]",
+      );
+      const savedContext = localStorage.getItem("currentContext");
+      const isSameContext =
+        savedContext === "artist" &&
+        JSON.stringify(savedIds) === JSON.stringify(trackIds);
+      if (isSameContext) {
+        togglePlay();
+      } else {
         setContext("artist", trackIds, 0, id);
       }
     });

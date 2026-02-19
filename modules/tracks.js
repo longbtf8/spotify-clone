@@ -1,7 +1,7 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$ } from "../utils/commonPage.js";
 import { handleArtistClick } from "./artist.js";
-import { setContext } from "./audioPlayer.js";
+import { getState, setContext, togglePlay } from "./audioPlayer.js";
 
 // UI showTodayBiggestHit
 export async function showTodayBiggestHit() {
@@ -40,7 +40,6 @@ export async function showPopularArtists() {
   const artistsGrid = $(".artists-grid");
   try {
     const data = await httpRequest.get("albums/popular?limit=20");
-    console.log(data);
     const artists = data.albums
       .map((artist) => {
         return `<div class="artist-card" data-artist-id="${artist.artist_id}">
@@ -69,7 +68,30 @@ export async function playerSongHome() {
   const hitsCards = await showTodayBiggestHit();
 
   hitsCards.forEach((hitsCard, index) => {
-    hitsCard.addEventListener("click", () => {
+    const playBtn = hitsCard.querySelector(".hit-play-btn");
+    // click nếu đang phát thì dừng nếu dừng thì phát
+    playBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const ids = Array.from(hitsCards).map((c) => c.dataset.trackId);
+      const playList = JSON.parse(
+        localStorage.getItem("currentPlaylist") || "[]",
+      );
+      const savedIndex = parseInt(
+        localStorage.getItem("currentTrackIndex") || 0,
+      );
+      const isSameTrack =
+        JSON.stringify(playList) === JSON.stringify(ids) &&
+        savedIndex === index;
+      if (isSameTrack) {
+        togglePlay();
+      } else {
+        setContext("home", ids, index);
+      }
+    });
+
+    // clickCard (không phải button thì luôn tải bài)
+    hitsCard.addEventListener("click", (e) => {
+      if (e.target.closest(".hit-play-btn")) return;
       const ids = Array.from(hitsCards).map((c) => c.dataset.trackId);
       setContext("home", ids, index);
     });
@@ -78,6 +100,33 @@ export async function playerSongHome() {
   // artists
   const artistCards = await showPopularArtists();
   artistCards.forEach((artistCard) => {
+    const artistPlayBtn = artistCard.querySelector(".artist-play-btn");
+
+    artistPlayBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const artistId = artistCard.dataset.artistId;
+      const currentState = getState();
+      if (
+        currentState.context === "artist" &&
+        currentState.artistId === artistId
+      ) {
+        togglePlay();
+        return;
+      }
+      //  chưa phát thì phải fetch lấy dữ liệu
+      try {
+        const data = await httpRequest.get(
+          `artists/${artistId}/tracks/popular`,
+        );
+        const trackIds = data.tracks.map((t) => t.id);
+        if (trackIds.length > 0) {
+          setContext("artist", trackIds, 0, artistId);
+        }
+      } catch (error) {
+        console.error("Lỗi khi phát artist:", err);
+      }
+    });
+
     artistCard.addEventListener("click", () => {
       handleArtistClick(artistCard);
     });
