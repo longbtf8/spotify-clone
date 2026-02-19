@@ -8,16 +8,6 @@ class PlayerController {
     this.currentIndex = localStorage.getItem("currentTrackIndex") || 0;
     this.context = localStorage.getItem("currentContext") || "home";
   }
-  async setContent(contextType, trackIds, startIndex = 0) {
-    this.context = contextType;
-    this.currentPlaylist = trackIds;
-    this.currentIndex = startIndex;
-
-    localStorage.setItem("currentContext", contextType);
-    localStorage.setItem("currentPlaylist", JSON.stringify(trackIds));
-
-    await this.loadTrack(this.currentPlaylist[this.currentIndex]);
-  }
 
   async loadTrack(trackId) {
     try {

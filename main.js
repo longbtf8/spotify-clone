@@ -6,6 +6,7 @@ import {
 import { setupLibraryTabs, initSortMenu } from "./modules/library.js";
 import { initPlayListManager } from "./modules/playlist.js";
 import { initAuth } from "./modules/auth.js";
+import { initPlayer } from "./modules/audioPlayer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   showTodayBiggestHit();
@@ -15,4 +16,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initSortMenu();
   initPlayListManager();
   initAuth();
+  initPlayer();
 });
