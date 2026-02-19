@@ -29,7 +29,12 @@ function updateCurrentUser(user) {
     userAvatar.src = user.avatar_url;
   }
   if (user.email) {
-    userName.textContent = user.email;
+    const userNameInfo = user.email.split("@")[0];
+    const result =
+      userNameInfo.length > 10
+        ? userNameInfo.slice(0, 10) + "..."
+        : userNameInfo;
+    userName.textContent = result;
   }
 }
 
@@ -52,6 +57,7 @@ async function checkLoginStatus() {
 
   try {
     const { user } = await httpRequest.get("users/me");
+    console.log(user);
     updateCurrentUser(user);
     userInfo.classList.add("show");
   } catch (error) {

@@ -1769,36 +1769,34 @@
 }
 
 /* css auth password */
-.password-group {
+.input-container {
   position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
 
-.password-group .form-input {
-  padding-right: 44px; /* chừa chỗ cho icon */
+.form-input {
+  width: 100%;
+  padding-right: 44px;
 }
 
 .toggle-password {
   position: absolute;
-  top: 50%;
   right: 12px;
+  top: 50%;
   transform: translateY(-50%);
+
   background: none;
   border: none;
+  padding: 0;
   cursor: pointer;
   color: #a7a7a7;
-  font-size: 16px;
-  padding: 4px;
   display: flex;
   align-items: center;
-  transition: color 0.2s;
+  z-index: 10;
 }
 
 .toggle-password:hover {
   color: #fff;
-}
-
-/* Đẩy icon xuống nếu có error message hiện */
-.password-group .error-message ~ .toggle-password,
-.password-group.has-error .toggle-password {
-  top: calc(50% - 10px); /* điều chỉnh nếu cần */
 }
