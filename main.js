@@ -4,7 +4,7 @@ import {
   playerSongHome,
 } from "./modules/tracks.js";
 import { setupLibraryTabs, initSortMenu } from "./modules/library.js";
-import { initPlayListManager } from "./modules/playlist.js";
+import { initPlayListManager } from "./modules/playlistManager.js";
 import { initAuth } from "./modules/auth.js";
 import { initPlayer } from "./modules/audioPlayer.js";
 
