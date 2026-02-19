@@ -399,6 +399,9 @@ export async function initPlayer() {
     }
   }
 }
+export const isPlaying = () => {
+  return !audio.paused;
+};
 export function syncPlayButtons(isPlaying) {
   const trackId = state.playlist[state.index] ?? null;
 
@@ -414,7 +417,8 @@ export function syncPlayButtons(isPlaying) {
   // play-btn-large (artist/playlist)
   const largeBtn = document.querySelector(".play-btn-large");
   if (largeBtn) {
-    const artistCard = document.querySelector("[data-artist-id]");
+    // Lấy id artist đang hiển thị từ following-btn
+    const artistCard = document.querySelector(".following-btn");
     console.log(artistCard.dataset.artistId);
     console.log(state.artistId);
     const i = largeBtn.querySelector("i");

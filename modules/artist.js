@@ -1,6 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$, toMMSS } from "../utils/commonPage.js";
-import { setContext } from "./audioPlayer.js";
+import { isPlaying, setContext, syncPlayButtons } from "./audioPlayer.js";
 
 export async function handleArtistClick(artistCard) {
   const id = artistCard.dataset.artistId;
@@ -83,6 +83,7 @@ export async function handleArtistClick(artistCard) {
 
     await checkFollowStatus();
     followBtn.onclick = handleFollowClick;
+    syncPlayButtons(isPlaying());
 
     const artistTracks = await httpRequest.get(`artists/${id}/tracks/popular`);
     const trackIds = artistTracks?.tracks.map((t) => t.id);
