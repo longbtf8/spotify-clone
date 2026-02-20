@@ -128,7 +128,13 @@ export function initSortMenu() {
 
   let currentView = "grid-dense";
 
-  sortBtn.addEventListener("click", (e) => {
+  sortBtn.addEventListener("click", async (e) => {
+    try {
+      const result = await httpRequest.get("users/me");
+    } catch (error) {
+      showToast("Please log in to create a playlist", "error");
+      return;
+    }
     e.stopPropagation();
     e.preventDefault();
     const isOpen = sortMenu.classList.contains("show");

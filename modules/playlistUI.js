@@ -79,19 +79,7 @@ export async function loadAndDisplayPlaylists() {
       });
     });
   } catch (error) {
-    libraryContent.innerHTML = `
-      <div class="library-item active">
-        <div class="item-icon liked-songs">
-          <i class="fas fa-heart"></i>
-        </div>
-        <div class="item-info">
-          <div class="item-title">Liked Songs</div>
-          <div class="item-subtitle">
-            <i class="fas fa-thumbtack"></i>
-            Playlist • 3 songs
-          </div>
-        </div>
-      </div>`;
+    libraryContent.innerHTML = ``;
   }
 }
 

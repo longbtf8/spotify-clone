@@ -9,11 +9,11 @@ function showSignupForm() {
   $("#loginForm").style.display = "none";
 }
 
-function showLoginForm() {
+export function showLoginForm() {
   $("#signupForm").style.display = "none";
   $("#loginForm").style.display = "block";
 }
-function openModal() {
+export function openModal() {
   $("#authModal").classList.add("show");
   document.body.style.overflow = "hidden";
 }
@@ -334,4 +334,7 @@ export function initAuth() {
     });
   }
   checkLoginStatus();
+}
+export function isAuthenticated() {
+  return !!localStorage.getItem("accessToken");
 }

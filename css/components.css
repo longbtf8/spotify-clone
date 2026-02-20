@@ -1800,3 +1800,12 @@
 .toggle-password:hover {
   color: #fff;
 }
+
+.auth-locked {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.auth-locked:hover {
+  background: transparent !important;
+}
