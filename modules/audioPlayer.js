@@ -119,12 +119,12 @@ export async function setContext(
   await loadAndPlay(trackIds[startIndex]); // fix bug cũ: truyền đúng id, không phải cả mảng
 }
 
-// ─── SHUFFLE HELPERS ──────────────────────────────────────────────────────────
+//  SHUFFLE HELPERS
 function getShuffleNextIndex() {
   const available = state.playlist.filter(
     (id) => !state.shuffleHistory.includes(id),
   );
-  // hết bài → reset, tránh lặp lại bài hiện tại ngay lập tức
+  // hết bài thì reset, tránh lặp lại bài hiện tại ngay lập tức
   const pool = available.length
     ? available
     : state.playlist.filter((id) => id !== state.playlist[state.index]);
@@ -140,7 +140,7 @@ function getShufflePrevIndex() {
   return state.playlist.indexOf(prevId);
 }
 
-// ─── NEXT / PREV ──────────────────────────────────────────────────────────────
+//  NEXT / PREV
 export async function next() {
   if (!state.playlist.length) return;
   state.index = state.isShuffle
@@ -397,6 +397,28 @@ export async function initPlayer() {
       renderTrackInfo(track);
     } catch (e) {
       console.warn("Không thể restore bài hát:", e);
+    }
+  } else if (!state.playlist.length) {
+    // lần đầu vô app
+    console.log(1);
+    try {
+      const data = await httpRequest.get("tracks/trending?limit=20");
+      console.log(data);
+      const trackIds = data.tracks?.map((t) => t.id);
+
+      if (trackIds.length) {
+        state.playlist = trackIds;
+        state.index = 0;
+        state.context = "home";
+        setLocalStorage();
+
+        // Hiển thị bài đầu tiên
+        const track = await httpRequest.get(`tracks/${trackIds[0]}`);
+        renderTrackInfo(track);
+        localStorage.setItem("currentSong", trackIds[0]);
+      }
+    } catch (error) {
+      console.warn("Không thể tải trending tracks mặc định:", error);
     }
   }
 }

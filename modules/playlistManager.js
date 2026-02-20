@@ -77,7 +77,6 @@ async function handleCreatePlaylist() {
   }
   try {
     // kiểm tra đã login chưa
-
     await httpRequest.post("playlists", {
       name: "My PlayList",
       description: "",
