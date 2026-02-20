@@ -36,19 +36,24 @@ export async function loadAndDisplayPlaylists() {
     const data = await httpRequest.get("me/playlists");
     const playLists = data.playlists?.filter((p) => p.name !== "Liked Songs");
     let html = "";
-    console.log(data);
-    console.log(playLists);
     if (playLists) {
       html += playLists
         .map(
           (playlist) => `
           <div class="library-item" data-playlist-id="${playlist.id}">
-            <img src="${
-              playlist.image_url || "placeholder.svg?height=48&width=48"
-            }" alt="${playlist.name}" class="item-image" />
+          ${
+            playlist.image_url
+              ? `<img src="${
+                  playlist.image_url || "placeholder.svg?height=48&width=48"
+                }" alt="${playlist.name}" 
+            class="item-image" />`
+              : ` <div class="item-icon liked-songs">
+                <i class="fas fa-heart"></i>
+              </div>`
+          }
             <div class="item-info">
               <div class="item-title">${playlist.name}</div>
-              <div class="item-subtitle">Playlist • ${playlist.user_name}</div>
+              <div class="item-subtitle">Playlist  ${playlist.user_name ? `•${playlist.user_name}` : ""}</div>
             </div>
           </div>`,
         )
