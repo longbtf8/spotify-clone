@@ -14,6 +14,7 @@ const $$ = document.querySelectorAll.bind(document);
 const contextMenu = $("#contextMenu");
 const unfollowArtistBtn = $("#unfollow-artist-option");
 
+// context menu artist
 unfollowArtistBtn.addEventListener("click", async () => {
   const artistId = contextMenu.dataset.artistId;
   if (artistId) {
@@ -24,6 +25,13 @@ unfollowArtistBtn.addEventListener("click", async () => {
         contextMenu.classList.remove("show");
         if (itemArtist) itemArtist.remove();
         showToast("Đã bỏ theo dõi nghệ sĩ.");
+
+        // nếu đang xem ở nghệ sĩ đó cập nhật giao diện
+        const followBtn = $(".following-btn");
+        if (followBtn.dataset.artistId === artistId) {
+          followBtn.textContent = "Follow";
+          followBtn.classList.remove("active");
+        }
       }
     } catch (error) {
       if (error?.response?.error?.code === "AUTH_HEADER_MISSING") {

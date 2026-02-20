@@ -54,6 +54,11 @@ export async function handleArtistClick(artistCard) {
         followBtn.textContent = "Follow";
         followBtn.classList.remove("active");
       }
+
+      // realTime artist
+      if (document.querySelector(".artistBtn").classList.contains("active")) {
+        document.querySelector(".artistBtn").click();
+      }
     } catch (error) {
       if (error?.response?.error?.code === "ALREADY_FOLLOWING") {
         showToast(error?.response?.error?.message, "error");

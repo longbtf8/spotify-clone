@@ -1,5 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$ } from "../utils/commonPage.js";
+import { showConfirm } from "../utils/confirm.js";
 import { showToast } from "../utils/showToast.js";
 import { handlePlaylistClick } from "./playlistDetail.js";
 
@@ -12,20 +13,20 @@ export function initPlaylistContextMenu() {
     if (!playlistId) return;
 
     try {
-      if (showToast(`Are you sure you want to delete this playlist?`)) {
+      if (await showConfirm(`Are you sure you want to delete this playlist?`)) {
         await httpRequest.del(`playlists/${playlistId}`);
         $(`.library-item[data-playlist-id="${playlistId}"]`)?.remove();
         showToast("Đã xóa playlist thành công.");
       }
     } catch (error) {
-      showToast("An error occurred while deleting the playlist.");
+      showToast("An error occurred while deleting the playlist.", "error");
       console.error("Lỗi khi xóa playlist:", error);
     } finally {
       contextMenu.classList.remove("show");
     }
   });
 }
-
+// playlist
 export async function loadAndDisplayPlaylists() {
   const libraryContent = $(".library-content");
   $(".playListBtn").classList.add("active");
@@ -33,9 +34,10 @@ export async function loadAndDisplayPlaylists() {
 
   try {
     const data = await httpRequest.get("me/playlists");
-    const playLists = data.playlists;
+    const playLists = data.playlists?.filter((p) => p.name !== "Liked Songs");
     let html = "";
-
+    console.log(data);
+    console.log(playLists);
     if (playLists) {
       html += playLists
         .map(
