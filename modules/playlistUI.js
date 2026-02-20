@@ -1,5 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$ } from "../utils/commonPage.js";
+import { showToast } from "../utils/showToast.js";
 import { handlePlaylistClick } from "./playlistDetail.js";
 
 const contextMenu = $("#contextMenu");
@@ -11,13 +12,13 @@ export function initPlaylistContextMenu() {
     if (!playlistId) return;
 
     try {
-      if (window.confirm(`Bạn có chắc muốn xóa playlist này không?`)) {
+      if (showToast(`Are you sure you want to delete this playlist?`)) {
         await httpRequest.del(`playlists/${playlistId}`);
         $(`.library-item[data-playlist-id="${playlistId}"]`)?.remove();
-        alert("Đã xóa playlist thành công.");
+        showToast("Đã xóa playlist thành công.");
       }
     } catch (error) {
-      alert("Có lỗi xảy ra khi xóa playlist.");
+      showToast("An error occurred while deleting the playlist.");
       console.error("Lỗi khi xóa playlist:", error);
     } finally {
       contextMenu.classList.remove("show");

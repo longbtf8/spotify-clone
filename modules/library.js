@@ -1,4 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
+import { showConfirm } from "../utils/confirm.js";
+import { showToast } from "../utils/showToast.js";
 import { handleArtistClick } from "./artist.js";
 import {
   loadAndDisplayPlaylists,
@@ -16,22 +18,22 @@ unfollowArtistBtn.addEventListener("click", async () => {
   const artistId = contextMenu.dataset.artistId;
   if (artistId) {
     try {
-      if (window.confirm(`Bạn có chắc muốn huỷ Follow chứ `)) {
+      if (await showConfirm(`Are you sure you want to unfollow? `)) {
         await httpRequest.del(`artists/${artistId}/follow`);
         const itemArtist = $(`.library-item[data-artist-id="${artistId}"]`);
         contextMenu.classList.remove("show");
         if (itemArtist) itemArtist.remove();
-        alert("Đã bỏ theo dõi nghệ sĩ.");
+        showToast("Đã bỏ theo dõi nghệ sĩ.");
       }
     } catch (error) {
       if (error?.response?.error?.code === "AUTH_HEADER_MISSING") {
-        alert("Vui lòng đăng nhập để thực hiện");
+        showToast("Please log in to proceed.", "error");
       }
       if (error?.response?.error?.code === "NOT_FOLLOWING") {
-        alert("Not following this artist");
+        showToast("Not following this artist", "error");
       }
       console.error("Lỗi khi bỏ theo dõi:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại.");
+      showToast("An error occurred, please try again.", "error");
     } finally {
       contextMenu.classList.remove("show");
     }

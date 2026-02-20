@@ -1,5 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$ } from "../utils/commonPage.js";
+import { showToast } from "../utils/showToast.js";
 import { loadAndDisplayPlaylists } from "./library.js";
 
 const createBtn = $(".create-btn");
@@ -41,9 +42,9 @@ export function initPlayListManager() {
       // Tải lại cả chi tiết playlist
       await handlePlaylistClick(currentEditingPlaylistId);
       await loadAndDisplayPlaylists();
-      alert("Cập nhật playlist thành công!");
+      showToast("Cập nhật playlist thành công!");
     } catch (error) {
-      alert("Lỗi khi cập nhật playlist.");
+      showToast("Lỗi khi cập nhật playlist.", "error");
       console.error("Update playlist error:", error);
     }
   });

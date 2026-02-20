@@ -1,5 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, $$, toMMSS } from "../utils/commonPage.js";
+import { showToast } from "../utils/showToast.js";
 import {
   isPlaying,
   setContext,
@@ -55,19 +56,19 @@ export async function handleArtistClick(artistCard) {
       }
     } catch (error) {
       if (error?.response?.error?.code === "ALREADY_FOLLOWING") {
-        alert(error?.response?.error?.message);
+        showToast(error?.response?.error?.message, "error");
       }
       if (error?.response?.error?.code === "NOT_FOLLOWING") {
-        alert("Not following this artist");
+        showToast("Not following this artist", "error");
       }
       if (error?.response?.error?.code === "AUTH_HEADER_MISSING") {
-        alert("Vui lòng đăng nhập để được follow");
+        showToast("Vui lòng đăng nhập để được follow", "error");
       }
       if (error?.response?.error?.code === "ARTIST_NOT_FOUND") {
-        alert("ARTIST_NOT_FOUND");
+        showToast("Không tìm thấy ca sĩ", "error");
       }
       if (error?.response?.error?.code === "TOKEN_EXPIRED") {
-        alert("Vui lòng đăng nhập lại");
+        showToast("Vui lòng đăng nhập lại", "error");
       }
     }
   };
