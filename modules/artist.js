@@ -135,10 +135,27 @@ export async function handleArtistClick(artistCard) {
     // Click từng track  phát đúng bài đó
     $$(".track-item").forEach((trackItem, index) => {
       trackItem.addEventListener("click", () => {
+        updateActiveTrack();
         setContext("artist", trackIds, index, id);
       });
     });
+    // Thêm active cho track đang phát
+    const currentState = getState();
+    if (currentState.context === "artist" && currentState.artistId === id) {
+      updateActiveTrack();
+    }
   } catch (error) {
     console.log(error);
   }
+}
+
+export function updateActiveTrack() {
+  const currentState = getState();
+  const currentTrackId = currentState.playlist[currentState.index];
+  $$(".track-item[data-artist-track-id]").forEach((item) => {
+    item.classList.toggle(
+      "active",
+      item.dataset.artistTrackId === currentTrackId,
+    );
+  });
 }

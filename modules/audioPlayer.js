@@ -1,5 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, toMMSS } from "../utils/commonPage.js";
+import { updateActiveTrack } from "./artist.js";
 
 //  STATE
 const state = {
@@ -90,6 +91,7 @@ export const getState = () => state;
 async function loadAndPlay(trackId) {
   try {
     const track = await httpRequest.get(`tracks/${trackId}`);
+    updateActiveTrack();
     renderTrackInfo(track);
     await play();
   } catch (e) {
