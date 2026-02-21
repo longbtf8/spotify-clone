@@ -70,7 +70,6 @@ export function initPlayListManager() {
 async function handleCreatePlaylist() {
   try {
     const result = await httpRequest.get("users/me");
-    console.log(result);
   } catch (error) {
     showToast("Please log in to create a playlist", "error");
     return;

@@ -40,7 +40,6 @@ export async function handleArtistClick(artistCard) {
     }
   };
   // click follow
-
   const handleFollowClick = async () => {
     const artistId = followBtn.dataset.artistId;
     const isFollowing = followBtn.classList.contains("active");

@@ -23,7 +23,7 @@ export function initPlayListManager() {
     if (!currentEditingPlaylistId) return;
     const name = $("#playlistName").value;
     const description = $("#playlistDescription").value;
-    //  anh
+    //  ảnh
     try {
       if (selectedCoverFile) {
         const formData = new FormData();

@@ -48,6 +48,11 @@ unfollowArtistBtn.addEventListener("click", async () => {
   }
 });
 
+document.addEventListener("click", (e) => {
+  if (!contextMenu.contains(e.target)) {
+    contextMenu.classList.remove("show");
+  }
+});
 export function setupLibraryTabs() {
   const artistBtn = $(".artistBtn");
   const playListBtn = $(".playListBtn");
@@ -55,16 +60,18 @@ export function setupLibraryTabs() {
 
   initPlaylistContextMenu();
 
+  // artistBtn
   artistBtn.addEventListener("click", async () => {
     artistBtn.classList.add("active");
     playListBtn.classList.remove("active");
     try {
       const data = await httpRequest.get("me/following?limit=20&offset=0");
+      const currentArtists = localStorage.getItem("artistsPlaylistId");
       if (data.artists.length > 0) {
         const artistFollow = data.artists
           .map(
             (artist) => `
-            <div class="library-item" data-artist-id="${artist.id}">
+            <div class="library-item ${artist.id === currentArtists ? "active" : ""}" data-artist-id="${artist.id}">
               <img src="${artist.image_url}" alt="${artist.name}" class="item-image" />
               <div class="item-info">
                 <div class="item-title">${artist.name}</div>
@@ -77,6 +84,8 @@ export function setupLibraryTabs() {
 
         $$(".library-item").forEach((item) => {
           item.addEventListener("click", () => {
+            localStorage.setItem("artistsPlaylistId", item?.dataset.artistId);
+            console.log(item);
             const currentActiveItem = libraryContent.querySelector(
               ".library-item.active",
             );

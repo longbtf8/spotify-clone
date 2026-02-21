@@ -14,9 +14,21 @@ export function initPlaylistContextMenu() {
 
     try {
       if (await showConfirm(`Are you sure you want to delete this playlist?`)) {
+        const currentPlaylist = $(
+          `.library-item.active[data-playlist-id="${playlistId}"]`,
+        );
+
         await httpRequest.del(`playlists/${playlistId}`);
         $(`.library-item[data-playlist-id="${playlistId}"]`)?.remove();
-        showToast("Đã xóa playlist thành công.");
+        showToast("Playlist successfully deleted.");
+
+        if (currentPlaylist) {
+          const playlistSeparate = $(".playlist-separate.show");
+          if (playlistSeparate?.classList.contains("show")) {
+            playlistSeparate?.classList.remove("show");
+            $(".content-wrapper")?.classList.add("show");
+          }
+        }
       }
     } catch (error) {
       showToast("An error occurred while deleting the playlist.", "error");
@@ -32,6 +44,7 @@ export async function loadAndDisplayPlaylists() {
   $(".playListBtn").classList.add("active");
   $(".artistBtn").classList.remove("active");
 
+  const activePlaylistId = localStorage.getItem("playlistId") ?? null;
   try {
     const data = await httpRequest.get("me/playlists");
     const playLists = data.playlists?.filter((p) => p.name !== "Liked Songs");
@@ -63,8 +76,12 @@ export async function loadAndDisplayPlaylists() {
     libraryContent.innerHTML = html;
 
     $$(".library-item[data-playlist-id]").forEach((item) => {
+      if (item.dataset.playlistId === activePlaylistId) {
+        item.classList.add("active");
+      }
       item.addEventListener("click", () => {
         const playlistId = item.dataset.playlistId;
+        localStorage.setItem("playlistId", playlistId);
         const currentActiveItem = libraryContent.querySelector(
           ".library-item.active",
         );
