@@ -105,8 +105,10 @@ export async function playerSongHome() {
 
     artistPlayBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      console.log(appState.CURRENT_ARTIST_ID);
       const artistId = artistCard.dataset.artistId;
+
+      // Active item trong sidebar
+      activeItemArtistsInLibrary(artistId);
       const currentState = getState();
       if (
         currentState.context === "artist" &&
@@ -130,6 +132,11 @@ export async function playerSongHome() {
     });
 
     artistCard.addEventListener("click", () => {
+      const artistId = artistCard.dataset.artistId;
+
+      // Active item trong sidebar
+      activeItemArtistsInLibrary(artistId);
+
       handleArtistClick(artistCard);
     });
   });
@@ -168,4 +175,11 @@ export async function playerSongHome() {
       console.log(error);
     }
   }
+}
+// Active item trong sidebar
+function activeItemArtistsInLibrary(artistId) {
+  appState.CURRENT_ARTIST_ID = artistId;
+  $$(".library-item").forEach((i) => i.classList.remove("active"));
+  const sidebarItem = $(`.library-item[data-artist-id="${artistId}"]`);
+  if (sidebarItem) sidebarItem.classList.add("active");
 }
