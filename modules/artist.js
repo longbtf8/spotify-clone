@@ -2,6 +2,7 @@ import httpRequest from "../service/httpRequest.js";
 import { $, $$, toMMSS } from "../utils/commonPage.js";
 import { showToast } from "../utils/showToast.js";
 import {
+  getState,
   isPlaying,
   setContext,
   syncPlayButtons,
@@ -99,21 +100,16 @@ export async function handleArtistClick(artistCard) {
     const trackIds = artistTracks?.tracks.map((t) => t.id);
 
     // Click nút Play lớn phát bài đầu tiên
-    $(".play-btn-large").addEventListener("click", () => {
+    $(".play-btn-large").onclick = () => {
       if (!trackIds.length) return;
-      const savedIds = JSON.parse(
-        localStorage.getItem("currentPlaylist") || "[]",
-      );
-      const savedContext = localStorage.getItem("currentContext");
-      const isSameContext =
-        savedContext === "artist" &&
-        JSON.stringify(savedIds) === JSON.stringify(trackIds);
-      if (isSameContext) {
+
+      const currentState = getState();
+      if (currentState.context === "artist" && currentState.artistId === id) {
         togglePlay();
       } else {
         setContext("artist", trackIds, 0, id);
       }
-    });
+    };
 
     // Render danh sách track
     trackList.innerHTML = artistTracks.tracks
