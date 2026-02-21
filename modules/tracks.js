@@ -2,6 +2,7 @@ import httpRequest from "../service/httpRequest.js";
 import { $, $$ } from "../utils/commonPage.js";
 import { handleArtistClick } from "./artist.js";
 import { getState, setContext, togglePlay } from "./audioPlayer.js";
+import { appState } from "./state.js";
 
 // UI showTodayBiggestHit
 export async function showTodayBiggestHit() {
@@ -104,6 +105,7 @@ export async function playerSongHome() {
 
     artistPlayBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
+      console.log(appState.CURRENT_ARTIST_ID);
       const artistId = artistCard.dataset.artistId;
       const currentState = getState();
       if (
@@ -139,6 +141,8 @@ export async function playerSongHome() {
 
   // click Home
   $(".home-btn").addEventListener("click", () => {
+    // xoá library active
+    $$(".library-item").forEach((i) => i.classList.remove("active"));
     contentWrapper.classList.add("show");
     artistSeparate.classList.remove("show");
     playlistSeparate.classList.remove("show");
@@ -146,6 +150,8 @@ export async function playerSongHome() {
     localStorage.setItem("currentContext", "home");
   });
   $(".logo i").addEventListener("click", () => {
+    // xoá library active
+    $$(".library-item").forEach((i) => i.classList.remove("active"));
     contentWrapper.classList.add("show");
     playlistSeparate.classList.remove("show");
     artistSeparate.classList.remove("show");

@@ -7,6 +7,7 @@ import {
   showPlaylistContextMenu,
   initPlaylistContextMenu,
 } from "./playlistUI.js";
+import { appState } from "./state.js";
 
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
@@ -66,12 +67,12 @@ export function setupLibraryTabs() {
     playListBtn.classList.remove("active");
     try {
       const data = await httpRequest.get("me/following?limit=20&offset=0");
-      const currentArtists = localStorage.getItem("artistsPlaylistId");
+
       if (data.artists.length > 0) {
         const artistFollow = data.artists
           .map(
             (artist) => `
-            <div class="library-item ${artist.id === currentArtists ? "active" : ""}" data-artist-id="${artist.id}">
+            <div class="library-item"}" data-artist-id="${artist.id}">
               <img src="${artist.image_url}" alt="${artist.name}" class="item-image" />
               <div class="item-info">
                 <div class="item-title">${artist.name}</div>
@@ -81,15 +82,16 @@ export function setupLibraryTabs() {
           )
           .join("");
         libraryContent.innerHTML = artistFollow;
+        const activeItem = $(
+          `.library-item[data-artist-id="${appState.CURRENT_ARTIST_ID}"]`,
+        );
+        if (activeItem) activeItem.classList.add("active");
 
         $$(".library-item").forEach((item) => {
           item.addEventListener("click", () => {
-            localStorage.setItem("artistsPlaylistId", item?.dataset.artistId);
-            console.log(item);
-            const currentActiveItem = libraryContent.querySelector(
-              ".library-item.active",
-            );
-            if (currentActiveItem) currentActiveItem.classList.remove("active");
+            // lặp bên ngoài xoá các active cũ
+            appState.CURRENT_ARTIST_ID = item.dataset.artistId;
+            $$(".library-item").forEach((i) => i.classList.remove("active"));
             item.classList.add("active");
             handleArtistClick(item);
           });

@@ -3,6 +3,7 @@ import { $, $$ } from "../utils/commonPage.js";
 import { showConfirm } from "../utils/confirm.js";
 import { showToast } from "../utils/showToast.js";
 import { handlePlaylistClick } from "./playlistDetail.js";
+import { appState } from "./state.js";
 
 const contextMenu = $("#contextMenu");
 const deletePlaylistBtn = $("#delete-playlist-option");
@@ -38,13 +39,12 @@ export function initPlaylistContextMenu() {
     }
   });
 }
-// playlist
+// playlist library
 export async function loadAndDisplayPlaylists() {
   const libraryContent = $(".library-content");
   $(".playListBtn").classList.add("active");
   $(".artistBtn").classList.remove("active");
 
-  const activePlaylistId = localStorage.getItem("playlistId") ?? null;
   try {
     const data = await httpRequest.get("me/playlists");
     const playLists = data.playlists?.filter((p) => p.name !== "Liked Songs");
@@ -74,18 +74,16 @@ export async function loadAndDisplayPlaylists() {
     }
 
     libraryContent.innerHTML = html;
+    const activeItem = $(
+      `.library-item[data-playlist-id="${appState.CURRENT_PLAYLIST_ID}"]`,
+    );
+    if (activeItem) activeItem.classList.add("active");
 
     $$(".library-item[data-playlist-id]").forEach((item) => {
-      if (item.dataset.playlistId === activePlaylistId) {
-        item.classList.add("active");
-      }
       item.addEventListener("click", () => {
         const playlistId = item.dataset.playlistId;
-        localStorage.setItem("playlistId", playlistId);
-        const currentActiveItem = libraryContent.querySelector(
-          ".library-item.active",
-        );
-        if (currentActiveItem) currentActiveItem.classList.remove("active");
+        appState.CURRENT_PLAYLIST_ID = playlistId;
+        $$(".library-item").forEach((i) => i.classList.remove("active"));
         item.classList.add("active");
         handlePlaylistClick(playlistId);
       });
