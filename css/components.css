@@ -1346,9 +1346,13 @@
 .artist-separate {
   padding: 10px;
   display: none;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 .artist-separate.show {
-  display: block;
+  display: flex; /* ✅ đổi block → flex */
+  flex-direction: column;
 }
 .following-btn {
   padding: var(--spacing-xs) var(--spacing-md);
@@ -1499,9 +1503,13 @@
 .playlist-separate {
   padding: 10px;
   display: none; /* Ẩn mặc định */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 .playlist-separate.show {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 .playlist-hero {
