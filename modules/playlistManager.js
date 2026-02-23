@@ -1,7 +1,7 @@
 import httpRequest from "../service/httpRequest.js";
 import { $ } from "../utils/commonPage.js";
 import { loadAndDisplayPlaylists } from "./playlistUI.js";
-import { handlePlaylistClick } from "./playlistDetail.js";
+
 import { showToast } from "../utils/showToast.js";
 
 const playlistModal = $("#playlistModal");
@@ -29,36 +29,44 @@ export function initPlayListManager() {
     submitBtn.textContent = "Saving...";
 
     try {
-      const tasks = [
-        httpRequest.put(`playlists/${currentEditingPlaylistId}`, {
-          name,
-          description,
-        }),
-      ];
+      // cập nhập tên , mô tả
+      await httpRequest.put(`playlists/${currentEditingPlaylistId}`, {
+        name,
+        description,
+      });
 
+      // upload ảnh nếu có
       if (selectedCoverFile) {
-        const formData = new FormData();
-        formData.append("cover", selectedCoverFile);
-        tasks.push(
-          httpRequest.post(
-            `upload/playlist/${currentEditingPlaylistId}/cover`,
-            formData,
-          ),
+        const imageUrl = await uploadPlaylistCover(
+          currentEditingPlaylistId,
+          selectedCoverFile,
         );
+        if (imageUrl) {
+          $("#playlistDetailImage").src = imageUrl;
+          updateSidebarPlaylistImage(currentEditingPlaylistId, imageUrl);
+        }
       }
 
-      await Promise.all(tasks);
+      //  Fetch lại data mới nhất từ server
+      const updatedPlaylist = await httpRequest.get(
+        `playlists/${currentEditingPlaylistId}`,
+      );
+
+      console.log(updatedPlaylist);
+      // 4. Cập nhật realtime trên hero section
+      $("#playlistDetailName").textContent = updatedPlaylist.name;
+      $("#playlistDetailCreator").textContent = updatedPlaylist.user_name;
+      if (updatedPlaylist.image_url) {
+        $("#playlistDetailImage").src = updatedPlaylist.image_url;
+      }
+
+      await loadAndDisplayPlaylists();
 
       closePlaylistModal();
-
-      await Promise.all([
-        handlePlaylistClick(currentEditingPlaylistId),
-        loadAndDisplayPlaylists(),
-      ]);
-
       showToast("Playlist updated successfully!");
     } catch (error) {
       showToast("Error updating playlist.", "error");
+      console.log(error);
       console.error("Update playlist error:", error);
     } finally {
       submitBtn.disabled = false;
@@ -86,6 +94,61 @@ export function initPlayListManager() {
   playlistModal.addEventListener("click", (e) => {
     if (e.target === playlistModal) closePlaylistModal();
   });
+}
+// Cập nhật ảnh sidebar item ngay lập tức
+function updateSidebarPlaylistImage(playlistId, imageUrl) {
+  const sidebarItem = $(`.library-item[data-playlist-id="${playlistId}"]`);
+  if (!sidebarItem) return;
+
+  // Nếu đang có item-image thì cập nhật src
+  const existingImg = sidebarItem.querySelector(".item-image");
+  if (existingImg) {
+    existingImg.src = imageUrl;
+    return;
+  }
+
+  // Nếu đang hiển thị icon (chưa có ảnh) → thay bằng img
+  const iconEl = sidebarItem.querySelector(".item-icon");
+  if (iconEl) {
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = "Playlist cover";
+    img.className = "item-image";
+    iconEl.replaceWith(img);
+  }
+}
+
+// Upload ảnh
+async function uploadPlaylistCover(playlistId, file) {
+  const formData = new FormData();
+  formData.append("cover", file);
+  let result;
+  try {
+    result = await httpRequest.post(
+      `upload/playlist/${playlistId}/cover`,
+      formData,
+    );
+    console.log(result);
+  } catch (err) {
+    const status = err?.status || err?.response?.status;
+    if (status === 409) {
+      // Ảnh đã tồn tại → cập nhật bằng PUT
+      const formData2 = new FormData();
+      formData2.append("cover", file);
+      result = await httpRequest.put(
+        `upload/playlist/${playlistId}/cover`,
+        formData2,
+      );
+      console.log(result);
+    } else {
+      throw err;
+    }
+  }
+  const relativeUrl = result?.file?.url;
+  if (relativeUrl) {
+    return `https://spotify.f8team.dev${relativeUrl}`;
+  }
+  return null;
 }
 
 async function handleCreatePlaylist() {
