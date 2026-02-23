@@ -127,7 +127,7 @@ export async function playerSongHome() {
           setContext("artist", trackIds, 0, artistId);
         }
       } catch (error) {
-        console.error("Lỗi khi phát artist:", err);
+        console.error("Lỗi khi phát artist:", error);
       }
     });
 
