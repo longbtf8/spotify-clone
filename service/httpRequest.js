@@ -2,6 +2,24 @@ class HttpRequest {
   constructor() {
     this.baseUrl = "https://spotify.f8team.dev/api/";
   }
+
+  _fixHttps(obj) {
+    if (typeof obj === "string") {
+      return obj.replace(/^http:\/\//i, "https://");
+    }
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this._fixHttps(item));
+    }
+    if (obj && typeof obj === "object") {
+      const fixed = {};
+      for (const key in obj) {
+        fixed[key] = this._fixHttps(obj[key]);
+      }
+      return fixed;
+    }
+    return obj;
+  }
+
   async _send(path, method, data, options = {}) {
     try {
       const _options = {
@@ -30,7 +48,7 @@ class HttpRequest {
         error.status = response.status;
         throw error;
       }
-      return response;
+      return this._fixHttps(response);
     } catch (error) {
       throw error;
     }
