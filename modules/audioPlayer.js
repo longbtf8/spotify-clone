@@ -1,5 +1,6 @@
 import httpRequest from "../service/httpRequest.js";
 import { $, toMMSS } from "../utils/commonPage.js";
+import { resetAddToPlaylistCache } from "./addToPlaylist.js";
 import { updateActiveTrack } from "./artist.js";
 
 //  STATE
@@ -66,6 +67,7 @@ export function renderTrackInfo(track) {
   playerArtist.textContent = track.artist_name;
   audio.src = track.audio_url;
   localStorage.setItem("currentSong", track.id ?? "");
+  resetAddToPlaylistCache();
 }
 
 //  PLAYBACK

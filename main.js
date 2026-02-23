@@ -15,6 +15,7 @@ import { initPlayer } from "./modules/audioPlayer.js";
 
 import { $, $$ } from "./utils/commonPage.js";
 import { showToast } from "./utils/showToast.js";
+import { initAddToPlaylist } from "./modules/addToPlaylist.js";
 
 // check sideBar khi chưa login
 function checkSideBar() {
@@ -53,6 +54,7 @@ function updateSideBarUi() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initAddToPlaylist();
   // sideBar
   checkSideBar();
   updateSideBarUi();
