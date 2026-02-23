@@ -6,6 +6,8 @@ let modal = null;
 let isOpen = false;
 let addBtn = null;
 let cachedAddedMap = {};
+let cachedTrackId = null;
+
 function createModal() {
   const el = document.createElement("div");
   el.className = "add-playlist-modal";
@@ -32,6 +34,13 @@ function checkAddBtn(addedMap) {
     addBtn.style.color = "";
     icon?.classList.replace("fa-check", "fa-plus");
   }
+}
+function resetAddBtn() {
+  if (!addBtn) return;
+  const icon = addBtn.querySelector("i");
+  addBtn.style.borderColor = "";
+  addBtn.style.color = "";
+  icon?.classList.replace("fa-check", "fa-plus");
 }
 function openModal() {
   if (!modal) modal = createModal();
@@ -60,6 +69,13 @@ async function loadPlayList() {
 
     // kiểm tra đã thêm bài đó chưa
     let addedMap = {};
+    if (
+      currentTrackId &&
+      currentTrackId === cachedTrackId &&
+      Object.keys(cachedAddedMap).length > 0
+    ) {
+      addedMap = { ...cachedAddedMap };
+    }
     if (currentTrackId) {
       await Promise.all(
         playlists.map(async (p) => {
@@ -71,7 +87,7 @@ async function loadPlayList() {
           try {
             const detail = await httpRequest.get(`playlists/${p.id}/tracks`);
             const tracks = detail.tracks || [];
-            addedMap[p.id] = tracks.some((t) => t.id === currentTrackId);
+            addedMap[p.id] = tracks.some((t) => t.track_id === currentTrackId);
           } catch {
             addedMap[p.id] = false;
           }
@@ -79,6 +95,7 @@ async function loadPlayList() {
       );
     }
     cachedAddedMap = { ...addedMap };
+    cachedTrackId = currentTrackId;
     checkAddBtn(addedMap);
     listEl.innerHTML = playlists
       .map((p) => {
@@ -166,4 +183,6 @@ export function initAddToPlaylist() {
 
 export function resetAddToPlaylistCache() {
   cachedAddedMap = {};
+  cachedTrackId = null;
+  resetAddBtn();
 }
