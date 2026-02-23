@@ -91,6 +91,7 @@ export function setupLibraryTabs() {
           item.addEventListener("click", () => {
             // lặp bên ngoài xoá các active cũ
             appState.CURRENT_ARTIST_ID = item.dataset.artistId;
+            appState.CURRENT_PLAYLIST_ID = null;
             $$(".library-item").forEach((i) => i.classList.remove("active"));
             item.classList.add("active");
             handleArtistClick(item);

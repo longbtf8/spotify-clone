@@ -2,6 +2,7 @@ import httpRequest from "../service/httpRequest.js";
 import { $, toMMSS } from "../utils/commonPage.js";
 import { resetAddToPlaylistCache } from "./addToPlaylist.js";
 import { updateActiveTrack } from "./artist.js";
+import { updateActivePlaylistTrack } from "./playlistDetail.js";
 
 //  STATE
 const state = {
@@ -95,6 +96,7 @@ async function loadAndPlay(trackId) {
   try {
     const track = await httpRequest.get(`tracks/${trackId}`);
     updateActiveTrack();
+    updateActivePlaylistTrack();
     renderTrackInfo(track);
     await play();
   } catch (e) {

@@ -83,6 +83,7 @@ export async function loadAndDisplayPlaylists() {
       item.addEventListener("click", () => {
         const playlistId = item.dataset.playlistId;
         appState.CURRENT_PLAYLIST_ID = playlistId;
+        appState.CURRENT_ARTIST_ID = null;
         $$(".library-item").forEach((i) => i.classList.remove("active"));
         item.classList.add("active");
         handlePlaylistClick(playlistId);

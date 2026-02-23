@@ -24,41 +24,62 @@ export function initPlayListManager() {
     const name = $("#playlistName").value;
     const description = $("#playlistDescription").value;
 
+    const submitBtn = playlistForm.querySelector(".auth-submit-btn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Saving...";
+
     try {
+      const tasks = [
+        httpRequest.put(`playlists/${currentEditingPlaylistId}`, {
+          name,
+          description,
+        }),
+      ];
+
       if (selectedCoverFile) {
         const formData = new FormData();
         formData.append("cover", selectedCoverFile);
-        await httpRequest.post(
-          `upload/playlist/${currentEditingPlaylistId}/cover`,
-          formData,
+        tasks.push(
+          httpRequest.post(
+            `upload/playlist/${currentEditingPlaylistId}/cover`,
+            formData,
+          ),
         );
       }
 
-      await httpRequest.put(`playlists/${currentEditingPlaylistId}`, {
-        name,
-        description,
-      });
+      await Promise.all(tasks);
 
       closePlaylistModal();
-      await handlePlaylistClick(currentEditingPlaylistId);
-      await loadAndDisplayPlaylists();
-      showToast("Cập nhật playlist thành công!");
+
+      await Promise.all([
+        handlePlaylistClick(currentEditingPlaylistId),
+        loadAndDisplayPlaylists(),
+      ]);
+
+      showToast("Playlist updated successfully!");
     } catch (error) {
-      showToast("Lỗi khi cập nhật playlist.", "error");
+      showToast("Error updating playlist.", "error");
       console.error("Update playlist error:", error);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Save";
     }
   });
 
   playlistCoverInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (file) {
-      selectedCoverFile = file;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        playlistCoverPreview.innerHTML = `<img src="${event.target.result}" alt="Cover Preview">`;
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    selectedCoverFile = file;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      playlistCoverPreview.innerHTML = `<img src="${event.target.result}" alt="Cover Preview">`;
+
+      // Preview ảnh ngay trên hero section (realtime trước khi save)
+      const heroImg = $("#playlistDetailImage");
+      if (heroImg) heroImg.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
   });
 
   playlistModalCloseBtn.addEventListener("click", closePlaylistModal);
@@ -69,27 +90,27 @@ export function initPlayListManager() {
 
 async function handleCreatePlaylist() {
   try {
-    const result = await httpRequest.get("users/me");
+    await httpRequest.get("users/me");
   } catch (error) {
     showToast("Please log in to create a playlist", "error");
     return;
   }
   try {
-    // kiểm tra đã login chưa
     await httpRequest.post("playlists", {
       name: "My PlayList",
       description: "",
     });
     await loadAndDisplayPlaylists();
   } catch (error) {
-    console.error("Lỗi khi tạo playlist:", error);
+    console.error("Error creating playlist:", error);
   }
 }
 
 export function openEditModal(playlist) {
   currentEditingPlaylistId = playlist.id;
   $("#playlistName").value = playlist.name;
-  $("#playlistDescription").value = playlist.description;
+  $("#playlistDescription").value = playlist.description || "";
+  selectedCoverFile = null;
 
   if (playlist.image_url) {
     playlistCoverPreview.innerHTML = `<img src="${playlist.image_url}" alt="Current Cover">`;
